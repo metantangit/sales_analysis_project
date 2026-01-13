@@ -1,0 +1,31 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+
+# 데이터 파일 (민감 정보)
+*.xlsx
+*.xls
+*.csv
+
+# 이미지 (용량 크면 제외)
+*.png
+sales_dashboard.png
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 임시 파일
+*.log
+*.tmp
