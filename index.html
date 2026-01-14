@@ -652,95 +652,95 @@ const data = {
     dates: ["11/01", "11/02", "11/03", "11/04", "11/05", "11/06", "11/07", "11/08", "11/09", "11/10", "11/11", "11/12", "11/13", "11/14", "11/15", "11/16", "11/17", "11/18", "11/19", "11/20", "11/21", "11/22", "11/23", "11/24", "11/25", "11/26", "11/27", "11/28", "11/29", "11/30"],
     sales: [3451150, 3584670, 2328890, 2521160, 2336160, 2667290, 2656600, 3507770, 3947350, 2423410, 2384990, 2318460, 2395070, 2550930, 3709360, 4209500, 2447430, 2469110, 2367890, 2273480, 2273480, 3578690, 3578690, 1836040, 2509910, 0, 2781550, 2112820, 3130560, 3502630],
     target: [3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000],
-    total: {total_sales},
-    cost: {cost},
-    grossProfit: {gross_profit},
-    grossMargin: {gross_margin},
-    deliveryFee: {delivery_fee},
-    laborCost: {labor_cost},
-    operatingProfit: {operating_profit},
-    operatingMargin: {operating_margin},
-    otherExpenses: {int(other_expenses)},
-    netProfit: {int(net_profit)},
-    netMargin: {net_margin},
+    total: 81855040,
+    cost: 22992919,
+    grossProfit: 58862121,
+    grossMargin: 71.9,
+    deliveryFee: 6794305,
+    laborCost: 8835000,
+    operatingProfit: 43232816,
+    operatingMargin: 52.8,
+    otherExpenses: 12278256,
+    netProfit: 30954560,
+    netMargin: 37.8,
     hall: 15488600,
     delivery: 66628970,
     platforms: [
-        {{name: '쿠팡잇츠', sales: 38899057, feeRate: 9.8, fee: 3812107, netSales: 35086950}},
-        {{name: '배민원', sales: 13166455, feeRate: 12.5, fee: 1645806, netSales: 11520649}},
-        {{name: '두잇', sales: 11847650, feeRate: 9.8, fee: 1161069, netSales: 10686581}},
-        {{name: '배달의민족', sales: 1169000, feeRate: 5.8, fee: 67802, netSales: 1101198}},
-        {{name: '요기요', sales: 1396308, feeRate: 5.8, fee: 80985, netSales: 1315323}},
-        {{name: '땡겨요', sales: 380229, feeRate: 5.0, fee: 19011, netSales: 361218}},
-        {{name: '기타', sales: 150500, feeRate: 5.0, fee: 7525, netSales: 142975}}
+        {name: '쿠팡잇츠', sales: 38899057, feeRate: 9.8, fee: 3812107, netSales: 35086950},
+        {name: '배민원', sales: 13166455, feeRate: 12.5, fee: 1645806, netSales: 11520649},
+        {name: '두잇', sales: 11847650, feeRate: 9.8, fee: 1161069, netSales: 10686581},
+        {name: '배달의민족', sales: 1169000, feeRate: 5.8, fee: 67802, netSales: 1101198},
+        {name: '요기요', sales: 1396308, feeRate: 5.8, fee: 80985, netSales: 1315323},
+        {name: '땡겨요', sales: 380229, feeRate: 5.0, fee: 19011, netSales: 361218},
+        {name: '기타', sales: 150500, feeRate: 5.0, fee: 7525, netSales: 142975}
     ],
     weekdayAvg: [1807154, 1843815, 1755627, 1833960, 1870252, 3561742, 3064042]
-}};
+};
 
 const fmt = (n) => Math.round(n).toLocaleString('ko-KR');
 const fmtK = (n) => Math.floor(n/10000);
 
-function showTab(idx) {{
-    document.querySelectorAll('.tab-btn').forEach((btn, i) => {{
+function showTab(idx) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
         btn.classList.toggle('active', i === idx);
-    }});
-    document.querySelectorAll('.tab-content').forEach((content, i) => {{
+    });
+    document.querySelectorAll('.tab-content').forEach((content, i) => {
         content.classList.toggle('active', i === idx);
-    }});
-}}
+    });
+}
 
 // KPI 카드
 const kpis = [
-    {{label: '총 매출', value: fmtK(data.total), unit: '만원', change: '목표 달성 100.8%', cls: 'primary'}},
-    {{label: '매출총이익', value: fmtK(data.grossProfit), unit: '만원', change: '', pct: data.grossMargin.toFixed(1) + '%', cls: 'success'}},
-    {{label: '영업이익', value: fmtK(data.operatingProfit), unit: '만원', change: '', pct: data.operatingMargin.toFixed(1) + '%', cls: 'info'}},
-    {{label: '순이익(추정)', value: fmtK(data.netProfit), unit: '만원', change: '', pct: data.netMargin.toFixed(1) + '%', cls: 'success'}},
-    {{label: '배달 비중', value: '81.4', unit: '%', change: '홀: 18.6%', cls: 'warning'}},
-    {{label: '배달 수수료', value: fmtK(data.deliveryFee), unit: '만원', change: '매출의 8.3%', cls: 'danger'}}
+    {label: '총 매출', value: fmtK(data.total), unit: '만원', change: '목표 달성 100.8%', cls: 'primary'},
+    {label: '매출총이익', value: fmtK(data.grossProfit), unit: '만원', change: '', pct: data.grossMargin.toFixed(1) + '%', cls: 'success'},
+    {label: '영업이익', value: fmtK(data.operatingProfit), unit: '만원', change: '', pct: data.operatingMargin.toFixed(1) + '%', cls: 'info'},
+    {label: '순이익(추정)', value: fmtK(data.netProfit), unit: '만원', change: '', pct: data.netMargin.toFixed(1) + '%', cls: 'success'},
+    {label: '배달 비중', value: '81.4', unit: '%', change: '홀: 18.6%', cls: 'warning'},
+    {label: '배달 수수료', value: fmtK(data.deliveryFee), unit: '만원', change: '매출의 8.3%', cls: 'danger'}
 ];
 
 document.getElementById('kpi-cards').innerHTML = kpis.map(k => `
-    <div class="kpi-card ${{k.cls}}">
-        <div class="kpi-label">${{k.label}}</div>
-        <div class="kpi-value">${{k.value}}<span class="small">${{k.unit}}</span>${{k.pct ? '<span class="kpi-percent">' + k.pct + '</span>' : ''}}</div>
-        <div class="kpi-change">${{k.change}}</div>
+    <div class="kpi-card ${k.cls}">
+        <div class="kpi-label">${k.label}</div>
+        <div class="kpi-value">${k.value}<span class="small">${k.unit}</span>${k.pct ? '<span class="kpi-percent">' + k.pct + '</span>' : ''}</div>
+        <div class="kpi-change">${k.change}</div>
     </div>
 `).join('');
 
-const chartLayout = {{
+const chartLayout = {
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
-    font: {{color: '#94a3b8', family: 'Inter'}},
-    xaxis: {{gridcolor: 'rgba(255,255,255,0.05)', showgrid: true}},
-    yaxis: {{gridcolor: 'rgba(255,255,255,0.05)', showgrid: true, tickformat: ',d'}},
-    margin: {{t: 20, b: 50, l: 70, r: 20}}
-}};
+    font: {color: '#94a3b8', family: 'Inter'},
+    xaxis: {gridcolor: 'rgba(255,255,255,0.05)', showgrid: true},
+    yaxis: {gridcolor: 'rgba(255,255,255,0.05)', showgrid: true, tickformat: ',d'},
+    margin: {t: 20, b: 50, l: 70, r: 20}
+};
 
 // 일별 매출
 Plotly.newPlot('daily-chart', [
-    {{x: data.dates, y: data.sales, type: 'scatter', mode: 'lines+markers', name: '실제', line: {{color: '#6366f1', width: 3}}, marker: {{size: 6}}, fill: 'tozeroy', fillcolor: 'rgba(99, 102, 241, 0.2)'}},
-    {{x: data.dates, y: data.target, type: 'scatter', mode: 'lines', name: '목표', line: {{color: '#f59e0b', width: 2, dash: 'dash'}}}}
-], {{...chartLayout, showlegend: true, legend: {{orientation: 'h', y: 1.1, font: {{color: '#cbd5e1'}}}}}}, {{responsive: true}});
+    {x: data.dates, y: data.sales, type: 'scatter', mode: 'lines+markers', name: '실제', line: {color: '#6366f1', width: 3}, marker: {size: 6}, fill: 'tozeroy', fillcolor: 'rgba(99, 102, 241, 0.2)'},
+    {x: data.dates, y: data.target, type: 'scatter', mode: 'lines', name: '목표', line: {color: '#f59e0b', width: 2, dash: 'dash'}}
+], {...chartLayout, showlegend: true, legend: {orientation: 'h', y: 1.1, font: {color: '#cbd5e1'}}}, {responsive: true});
 
 // 경고
 const alerts = [
-    {{level: 'danger', title: '⚠️ 쿠팡잇츠 의존도 과다', msg: '배달 매출의 58.4%가 쿠팡잇츠 집중 → 플랫폼 리스크 높음'}},
-    {{level: 'warning', title: '⚡ 배달 의존도 높음', msg: '배달 81.4% vs 홀 18.6% → 수수료 부담 큼'}},
-    {{level: 'success', title: '✅ 수익성 우수', msg: `영업이익률 ${{data.operatingMargin.toFixed(1)}}% → 업계 평균 대비 양호`}}
+    {level: 'danger', title: '⚠️ 쿠팡잇츠 의존도 과다', msg: '배달 매출의 58.4%가 쿠팡잇츠 집중 → 플랫폼 리스크 높음'},
+    {level: 'warning', title: '⚡ 배달 의존도 높음', msg: '배달 81.4% vs 홀 18.6% → 수수료 부담 큼'},
+    {level: 'success', title: '✅ 수익성 우수', msg: `영업이익률 ${data.operatingMargin.toFixed(1)}% → 업계 평균 대비 양호`}
 ];
 
 document.getElementById('alerts').innerHTML = alerts.map(a => `
-    <div class="alert ${{a.level}}">
-        <div class="alert-icon">${{a.level === 'danger' ? '⚠️' : a.level === 'warning' ? '⚡' : '✅'}}</div>
+    <div class="alert ${a.level}">
+        <div class="alert-icon">${a.level === 'danger' ? '⚠️' : a.level === 'warning' ? '⚡' : '✅'}</div>
         <div>
-            <div class="alert-title">${{a.title}}</div>
-            <div class="alert-message">${{a.msg}}</div>
+            <div class="alert-title">${a.title}</div>
+            <div class="alert-message">${a.msg}</div>
         </div>
     </div>
 `).join('');
 
 // 수익 워터폴
-Plotly.newPlot('profit-waterfall', [{{
+Plotly.newPlot('profit-waterfall', [{
     type: 'waterfall',
     orientation: 'v',
     x: ['매출', '원가', '매출총이익', '배달수수료', '인건비', '영업이익', '기타비용', '순이익'],
@@ -748,48 +748,48 @@ Plotly.newPlot('profit-waterfall', [{{
     measure: ['relative', 'relative', 'total', 'relative', 'relative', 'total', 'relative', 'total'],
     text: [
         fmt(data.total),
-        `-${{fmt(data.cost)}}<br>${{(data.cost/data.total*100).toFixed(1)}}%`,
-        `${{fmt(data.grossProfit)}}<br>${{data.grossMargin.toFixed(1)}}%`,
-        `-${{fmt(data.deliveryFee)}}<br>${{(data.deliveryFee/data.total*100).toFixed(1)}}%`,
-        `-${{fmt(data.laborCost)}}<br>${{(data.laborCost/data.total*100).toFixed(1)}}%`,
-        `${{fmt(data.operatingProfit)}}<br>${{data.operatingMargin.toFixed(1)}}%`,
-        `-${{fmt(data.otherExpenses)}}<br>${{(data.otherExpenses/data.total*100).toFixed(1)}}%`,
-        `${{fmt(data.netProfit)}}<br>${{data.netMargin.toFixed(1)}}%`
+        `-${fmt(data.cost)}<br>${(data.cost/data.total*100).toFixed(1)}%`,
+        `${fmt(data.grossProfit)}<br>${data.grossMargin.toFixed(1)}%`,
+        `-${fmt(data.deliveryFee)}<br>${(data.deliveryFee/data.total*100).toFixed(1)}%`,
+        `-${fmt(data.laborCost)}<br>${(data.laborCost/data.total*100).toFixed(1)}%`,
+        `${fmt(data.operatingProfit)}<br>${data.operatingMargin.toFixed(1)}%`,
+        `-${fmt(data.otherExpenses)}<br>${(data.otherExpenses/data.total*100).toFixed(1)}%`,
+        `${fmt(data.netProfit)}<br>${data.netMargin.toFixed(1)}%`
     ],
     textposition: 'outside',
-    connector: {{line: {{color: 'rgba(148, 163, 184, 0.3)'}}}},
-    decreasing: {{marker: {{color: '#ef4444'}}}},
-    increasing: {{marker: {{color: '#10b981'}}}},
-    totals: {{marker: {{color: '#6366f1'}}}}
-}}], {{...chartLayout, yaxis: {{...chartLayout.yaxis, tickformat: ',d'}}}}, {{responsive: true}});
+    connector: {line: {color: 'rgba(148, 163, 184, 0.3)'}},
+    decreasing: {marker: {color: '#ef4444'}},
+    increasing: {marker: {color: '#10b981'}},
+    totals: {marker: {color: '#6366f1'}}
+}], {...chartLayout, yaxis: {...chartLayout.yaxis, tickformat: ',d'}}, {responsive: true});
 
 // 비용 파이
-Plotly.newPlot('cost-pie', [{{
+Plotly.newPlot('cost-pie', [{
     values: [data.cost, data.deliveryFee, data.laborCost, data.otherExpenses],
     labels: ['원가 (28%)', '배달수수료 (8.3%)', '인건비 (10.8%)', '기타비용 (15%)'],
     type: 'pie',
     hole: 0.5,
-    marker: {{colors: ['#6366f1', '#ef4444', '#f59e0b', '#8b5cf6']}},
+    marker: {colors: ['#6366f1', '#ef4444', '#f59e0b', '#8b5cf6']},
     textinfo: 'label+percent',
-    textfont: {{color: '#fff', size: 13}}
-}}], {{...chartLayout, annotations: [{{text: `총비용<br>${{fmtK(data.cost + data.deliveryFee + data.laborCost + data.otherExpenses)}}만`, showarrow: false, font: {{size: 16, color: '#fff', weight: 700}}}}]}}, {{responsive: true}});
+    textfont: {color: '#fff', size: 13}
+}], {...chartLayout, annotations: [{text: `총비용<br>${fmtK(data.cost + data.deliveryFee + data.laborCost + data.otherExpenses)}만`, showarrow: false, font: {size: 16, color: '#fff', weight: 700}}]}, {responsive: true});
 
 // 수익성 지표
-Plotly.newPlot('margin-chart', [{{
+Plotly.newPlot('margin-chart', [{
     x: ['매출총이익률', '영업이익률', '순이익률'],
     y: [data.grossMargin, data.operatingMargin, data.netMargin],
     type: 'bar',
-    marker: {{color: ['#10b981', '#6366f1', '#8b5cf6']}},
+    marker: {color: ['#10b981', '#6366f1', '#8b5cf6']},
     text: [data.grossMargin.toFixed(1) + '%', data.operatingMargin.toFixed(1) + '%', data.netMargin.toFixed(1) + '%'],
     textposition: 'outside',
-    textfont: {{color: '#fff', size: 16, weight: 700}}
-}}], {{...chartLayout, yaxis: {{...chartLayout.yaxis, ticksuffix: '%', range: [0, 80]}}}}, {{responsive: true}});
+    textfont: {color: '#fff', size: 16, weight: 700}
+}], {...chartLayout, yaxis: {...chartLayout.yaxis, ticksuffix: '%', range: [0, 80]}}, {responsive: true});
 
 // 수수료 차트
 Plotly.newPlot('fee-chart', [
-    {{x: data.platforms.map(p => p.name), y: data.platforms.map(p => p.sales), name: '매출', type: 'bar', marker: {{color: '#6366f1'}}}},
-    {{x: data.platforms.map(p => p.name), y: data.platforms.map(p => p.fee), name: '수수료', type: 'bar', marker: {{color: '#ef4444'}}}}
-], {{...chartLayout, barmode: 'group', legend: {{orientation: 'h', y: 1.1, font: {{color: '#cbd5e1'}}}}}}, {{responsive: true}});
+    {x: data.platforms.map(p => p.name), y: data.platforms.map(p => p.sales), name: '매출', type: 'bar', marker: {color: '#6366f1'}},
+    {x: data.platforms.map(p => p.name), y: data.platforms.map(p => p.fee), name: '수수료', type: 'bar', marker: {color: '#ef4444'}}
+], {...chartLayout, barmode: 'group', legend: {orientation: 'h', y: 1.1, font: {color: '#cbd5e1'}}}, {responsive: true});
 
 // 플랫폼 테이블
 const totalPlatformSales = data.platforms.reduce((sum, p) => sum + p.sales, 0);
@@ -805,82 +805,82 @@ document.getElementById('platform-table').innerHTML = `
         </tr>
     </thead>
     <tbody>
-        ${{data.platforms.map(p => `
+        ${data.platforms.map(p => `
             <tr>
-                <td><span class="platform-name">${{p.name}}</span></td>
-                <td>${{fmt(p.sales)}}원</td>
-                <td><span class="badge">${{p.feeRate}}%</span></td>
-                <td style="color: #fca5a5;">${{fmt(p.fee)}}원</td>
-                <td style="color: #86efac; font-weight: 700;">${{fmt(p.netSales)}}원</td>
-                <td>${{(p.sales / totalPlatformSales * 100).toFixed(1)}}%</td>
+                <td><span class="platform-name">${p.name}</span></td>
+                <td>${fmt(p.sales)}원</td>
+                <td><span class="badge">${p.feeRate}%</span></td>
+                <td style="color: #fca5a5;">${fmt(p.fee)}원</td>
+                <td style="color: #86efac; font-weight: 700;">${fmt(p.netSales)}원</td>
+                <td>${(p.sales / totalPlatformSales * 100).toFixed(1)}%</td>
             </tr>
-        `).join('')}}
+        `).join('')}
     </tbody>
 `;
 
 // 플랫폼 파이
-Plotly.newPlot('platform-pie', [{{
+Plotly.newPlot('platform-pie', [{
     values: data.platforms.map(p => p.sales),
     labels: data.platforms.map(p => p.name),
     type: 'pie',
     hole: 0.5,
-    marker: {{colors: ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#64748b']}},
-    textfont: {{color: '#fff'}}
-}}], {{...chartLayout, showlegend: true, legend: {{font: {{color: '#cbd5e1'}}}}}}, {{responsive: true}});
+    marker: {colors: ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#64748b']},
+    textfont: {color: '#fff'}
+}], {...chartLayout, showlegend: true, legend: {font: {color: '#cbd5e1'}}}, {responsive: true});
 
 // 플랫폼 순수익
-Plotly.newPlot('platform-profit', [{{
+Plotly.newPlot('platform-profit', [{
     x: data.platforms.map(p => p.netSales),
     y: data.platforms.map(p => p.name),
     type: 'bar',
     orientation: 'h',
-    marker: {{color: data.platforms.map(p => p.netSales), colorscale: [[0, '#ef4444'], [1, '#10b981']], showscale: false}}
-}}], {{...chartLayout, xaxis: {{...chartLayout.xaxis, tickformat: ',d'}}}}, {{responsive: true}});
+    marker: {color: data.platforms.map(p => p.netSales), colorscale: [[0, '#ef4444'], [1, '#10b981']], showscale: false}
+}], {...chartLayout, xaxis: {...chartLayout.xaxis, tickformat: ',d'}}, {responsive: true});
 
 // 요일별
-Plotly.newPlot('weekday-chart', [{{
+Plotly.newPlot('weekday-chart', [{
     x: ['월', '화', '수', '목', '금', '토', '일'],
     y: data.weekdayAvg,
     type: 'bar',
-    marker: {{color: data.weekdayAvg, colorscale: [[0, '#6366f1'], [1, '#8b5cf6']], showscale: false}}
-}}], chartLayout, {{responsive: true}});
+    marker: {color: data.weekdayAvg, colorscale: [[0, '#6366f1'], [1, '#8b5cf6']], showscale: false}
+}], chartLayout, {responsive: true});
 
 // 홀 vs 배달
-Plotly.newPlot('channel-chart', [{{
+Plotly.newPlot('channel-chart', [{
     values: [data.hall, data.delivery],
     labels: ['홀 매출', '배달 매출'],
     type: 'pie',
     hole: 0.6,
-    marker: {{colors: ['#10b981', '#6366f1']}},
+    marker: {colors: ['#10b981', '#6366f1']},
     textinfo: 'label+percent',
-    textfont: {{color: '#fff', size: 14}}
-}}], {{...chartLayout, annotations: [{{text: `총 ${{fmtK(data.hall + data.delivery)}}만`, showarrow: false, font: {{size: 18, color: '#fff', weight: 700}}}}]}}, {{responsive: true}});
+    textfont: {color: '#fff', size: 14}
+}], {...chartLayout, annotations: [{text: `총 ${fmtK(data.hall + data.delivery)}만`, showarrow: false, font: {size: 18, color: '#fff', weight: 700}}]}, {responsive: true});
 
 // 객단가
-Plotly.newPlot('avg-price-chart', [{{
+Plotly.newPlot('avg-price-chart', [{
     x: ['홀 객단가', '배달 객단가'],
     y: [14248, 15271],
     type: 'bar',
-    marker: {{color: ['#10b981', '#6366f1']}},
+    marker: {color: ['#10b981', '#6366f1']},
     text: ['14,248원', '15,271원'],
     textposition: 'outside',
-    textfont: {{color: '#fff', size: 16}}
-}}], chartLayout, {{responsive: true}});
+    textfont: {color: '#fff', size: 16}
+}], chartLayout, {responsive: true});
 
 // 추천사항
 const recs = [
-    {{priority: 'high', title: '배달 플랫폼 분산 필요', desc: '쿠팡잇츠 58% → 배민 비중을 30%까지 늘리기', impact: '수수료 절감: 약 467,000원/월'}},
-    {{priority: 'medium', title: '홀 매출 증대 전략', desc: '홀 매출 비중을 25-30%까지 올리기', impact: '수수료 없는 순수익 증가 + 단골 고객 확보'}}
+    {priority: 'high', title: '배달 플랫폼 분산 필요', desc: '쿠팡잇츠 58% → 배민 비중을 30%까지 늘리기', impact: '수수료 절감: 약 467,000원/월'},
+    {priority: 'medium', title: '홀 매출 증대 전략', desc: '홀 매출 비중을 25-30%까지 올리기', impact: '수수료 없는 순수익 증가 + 단골 고객 확보'}
 ];
 
 document.getElementById('recommendations').innerHTML = recs.map(r => `
-    <div class="recommendation ${{r.priority}}">
+    <div class="recommendation ${r.priority}">
         <div class="rec-header">
-            <span class="rec-priority ${{r.priority}}">${{r.priority === 'high' ? '긴급' : '권장'}}</span>
-            <span class="rec-title">${{r.title}}</span>
+            <span class="rec-priority ${r.priority}">${r.priority === 'high' ? '긴급' : '권장'}</span>
+            <span class="rec-title">${r.title}</span>
         </div>
-        <div class="rec-desc">${{r.desc}}</div>
-        <div class="rec-impact">💡 예상 효과: ${{r.impact}}</div>
+        <div class="rec-desc">${r.desc}</div>
+        <div class="rec-impact">💡 예상 효과: ${r.impact}</div>
     </div>
 `).join('');
 
