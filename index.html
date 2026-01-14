@@ -1,30 +1,31 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>현선이네 상도점 - 매출 대시보드</title>
+    <title>현선이네 상도점 - 전문 경영 분석</title>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script>
+        const analysisData = ANALYSIS_DATA_PLACEHOLDER;
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366f1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
         }
-        
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            color: var(--dark);
         }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
+        .container { max-width: 1600px; margin: 0 auto; }
         .header {
             background: white;
             border-radius: 20px;
@@ -32,41 +33,75 @@
             margin-bottom: 25px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
-        
         .header h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            color: #1a1a2e;
-            margin-bottom: 10px;
+            color: var(--dark);
+            margin-bottom: 8px;
         }
-        
-        .header p {
-            color: #6c757d;
-            font-size: 16px;
+        .header .subtitle { color: #64748b; font-size: 15px; margin-bottom: 15px; }
+        .header .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
         }
-        
+        .tabs {
+            background: white;
+            border-radius: 16px;
+            padding: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover { background: var(--light); color: var(--primary); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             margin-bottom: 25px;
         }
-        
         .kpi-card {
             background: white;
             border-radius: 16px;
-            padding: 25px;
+            padding: 24px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s;
         }
-        
         .kpi-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
         }
-        
         .kpi-card::before {
             content: '';
             position: absolute;
@@ -74,316 +109,286 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, var(--primary), #8b5cf6);
         }
-        
+        .kpi-card.success::before { background: linear-gradient(90deg, var(--success), #34d399); }
+        .kpi-card.warning::before { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+        .kpi-card.danger::before { background: linear-gradient(90deg, var(--danger), #f87171); }
         .kpi-label {
-            font-size: 14px;
-            color: #6c757d;
-            font-weight: 500;
-            margin-bottom: 10px;
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
         .kpi-value {
             font-size: 32px;
             font-weight: 700;
-            color: #1a1a2e;
+            color: var(--dark);
             margin-bottom: 8px;
         }
-        
-        .kpi-change {
-            font-size: 14px;
-            color: #28a745;
+        .kpi-value .unit {
+            font-size: 16px;
             font-weight: 600;
+            color: #64748b;
+            margin-left: 4px;
         }
-        
-        .kpi-change.negative {
-            color: #dc3545;
-        }
-        
+        .kpi-change { font-size: 13px; font-weight: 600; }
+        .kpi-change.positive { color: var(--success); }
+        .kpi-change.negative { color: var(--danger); }
         .chart-container {
             background: white;
             border-radius: 16px;
-            padding: 25px;
+            padding: 24px;
             margin-bottom: 25px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         }
-        
         .chart-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            color: #1a1a2e;
+            color: var(--dark);
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
         .chart-title::before {
             content: '';
             width: 4px;
-            height: 24px;
-            background: linear-gradient(180deg, #667eea, #764ba2);
+            height: 20px;
+            background: linear-gradient(180deg, var(--primary), #8b5cf6);
             border-radius: 2px;
         }
-        
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+        }
+        .alert.danger { background: #fef2f2; border-color: var(--danger); color: #991b1b; }
+        .alert.warning { background: #fffbeb; border-color: var(--warning); color: #92400e; }
+        .alert.success { background: #f0fdf4; border-color: var(--success); color: #065f46; }
+        .alert-icon { font-size: 20px; flex-shrink: 0; }
+        .alert-content { flex: 1; }
+        .alert-title { font-weight: 700; margin-bottom: 4px; }
+        .alert-message { font-size: 14px; }
+        .recommendation {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .recommendation.high { border-color: var(--danger); }
+        .recommendation.medium { border-color: var(--warning); }
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .recommendation-priority {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .recommendation-priority.high { background: #fef2f2; color: var(--danger); }
+        .recommendation-priority.medium { background: #fffbeb; color: var(--warning); }
+        .recommendation-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .recommendation-desc {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .recommendation-impact {
+            background: var(--light);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .platform-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .platform-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            border-bottom: 2px solid var(--light);
+            text-transform: uppercase;
+        }
+        .platform-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--light);
+        }
+        .platform-table tr:hover { background: var(--light); }
+        .platform-name { font-weight: 600; color: var(--dark); }
+        .platform-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--light);
+            color: var(--primary);
+        }
+        @media (max-width: 768px) {
+            .tabs { flex-wrap: nowrap; overflow-x: scroll; }
+            .kpi-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 22px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
         .grid-2 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 25px;
         }
-        
-        @media (max-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            .kpi-grid {
-                grid-template-columns: 1fr;
-            }
-            .header h1 {
-                font-size: 24px;
-            }
-            .kpi-value {
-                font-size: 24px;
-            }
-        }
-        
-        .icon {
-            font-size: 24px;
-            margin-right: 5px;
-        }
-        
         .footer {
             text-align: center;
             color: white;
-            margin-top: 30px;
-            font-size: 14px;
-            opacity: 0.8;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 13px;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
-            <h1>🏪 현선이네 상도점 - 매출 대시보드</h1>
-            <p>2025년 11월 운영 리포트 | 데이터 기간: 11/1 ~ 11/30</p>
+            <h1>🏪 현선이네 상도점 경영 분석 대시보드</h1>
+            <p class="subtitle">AI 기반 요식업 전문 분석 리포트</p>
+            <span class="badge">2025년 11월 데이터</span>
         </div>
-        
-        <!-- KPI Cards -->
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label">💰 총 매출</div>
-                <div class="kpi-value">81,855,040<span style="font-size:18px;">원</span></div>
-                <div class="kpi-change">목표 대비 +655,040원</div>
-            </div>
-            
-            <div class="kpi-card">
-                <div class="kpi-label">🎯 목표 달성률</div>
-                <div class="kpi-value">100.8<span style="font-size:18px;">%</span></div>
-                <div class="kpi-change">✅ 목표 달성!</div>
-            </div>
-            
-            <div class="kpi-card">
-                <div class="kpi-label">📅 일 평균 매출</div>
-                <div class="kpi-value">226<span style="font-size:18px;">만원</span></div>
-                <div class="kpi-change">최고: 11/16 (420만)</div>
-            </div>
-            
-            <div class="kpi-card">
-                <div class="kpi-label">🚀 배달 비중</div>
-                <div class="kpi-value">81.1<span style="font-size:18px;">%</span></div>
-                <div class="kpi-change">홀: 18.9%</div>
-            </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab(0)">📊 경영 대시보드</button>
+            <button class="tab-btn" onclick="showTab(1)">💰 수익성 분석</button>
+            <button class="tab-btn" onclick="showTab(2)">📱 배달 플랫폼</button>
+            <button class="tab-btn" onclick="showTab(3)">⚙️ 운영 효율</button>
+            <button class="tab-btn" onclick="showTab(4)">🎯 AI 추천</button>
         </div>
-        
-        <!-- Main Chart: 일별 매출 추이 -->
-        <div class="chart-container">
-            <div class="chart-title">📈 일별 매출 추이</div>
-            <div id="daily-sales-chart"></div>
-        </div>
-        
-        <!-- Grid 2 columns -->
-        <div class="grid-2">
-            <!-- 홀 vs 배달 -->
+
+        <div class="tab-content active" id="tab-0">
+            <div class="kpi-grid" id="kpi-cards"></div>
             <div class="chart-container">
-                <div class="chart-title">🏪 홀 vs 배달 매출</div>
-                <div id="hall-delivery-chart"></div>
+                <div class="chart-title">일별 매출 추이</div>
+                <div id="daily-chart"></div>
             </div>
-            
-            <!-- 요일별 평균 -->
+            <div id="alerts"></div>
+        </div>
+
+        <div class="tab-content" id="tab-1">
+            <div class="grid-2">
+                <div class="chart-container">
+                    <div class="chart-title">수익 구조 분석</div>
+                    <div id="profit-structure"></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">비용 구성</div>
+                    <div id="cost-breakdown"></div>
+                </div>
+            </div>
             <div class="chart-container">
-                <div class="chart-title">📊 요일별 평균 매출</div>
-                <div id="weekday-chart"></div>
+                <div class="chart-title">배달 수수료 부담 (월간)</div>
+                <div id="delivery-fee-chart"></div>
             </div>
         </div>
-        
-        <!-- 배달 플랫폼 -->
-        <div class="chart-container">
-            <div class="chart-title">📱 배달 플랫폼별 매출 비중</div>
-            <div id="platform-chart"></div>
+
+        <div class="tab-content" id="tab-2">
+            <div class="chart-container">
+                <div class="chart-title">플랫폼별 매출 비교</div>
+                <table class="platform-table" id="platform-table"></table>
+            </div>
+            <div class="grid-2">
+                <div class="chart-container">
+                    <div class="chart-title">플랫폼별 점유율</div>
+                    <div id="platform-pie"></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">플랫폼별 실제 수익</div>
+                    <div id="platform-profit"></div>
+                </div>
+            </div>
         </div>
-        
+
+        <div class="tab-content" id="tab-3">
+            <div class="grid-2">
+                <div class="chart-container">
+                    <div class="chart-title">요일별 평균 매출</div>
+                    <div id="weekday-chart"></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">홀 vs 배달 비교</div>
+                    <div id="channel-comparison"></div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">객단가 분석</div>
+                <div id="avg-price-chart"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-4">
+            <div class="chart-container">
+                <div class="chart-title">우선순위 액션 아이템</div>
+                <div id="recommendations"></div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">1년 데이터 확보시 가능한 고급 분석</div>
+                <div style="padding: 20px; background: #f8fafc; border-radius: 12px; line-height: 1.8;">
+                    <h3 style="margin-bottom: 15px; color: #1e293b;">📅 시계열 분석</h3>
+                    <ul style="margin-left: 20px; color: #64748b;">
+                        <li>계절별 매출 패턴 및 성수기/비수기 식별</li>
+                        <li>학기 중 vs 방학 매출 변화 (대학가 특성)</li>
+                        <li>월별/분기별 성장률 (MoM, QoQ, YoY)</li>
+                        <li>명절 및 이벤트 영향 분석</li>
+                    </ul>
+                    <h3 style="margin: 20px 0 15px; color: #1e293b;">🎯 예측 모델</h3>
+                    <ul style="margin-left: 20px; color: #64748b;">
+                        <li>AI 기반 매출 예측 (ARIMA, Prophet)</li>
+                        <li>수요 예측을 통한 재고 최적화</li>
+                        <li>인력 배치 최적화</li>
+                        <li>이상 거래 자동 탐지</li>
+                    </ul>
+                    <h3 style="margin: 20px 0 15px; color: #1e293b;">👥 고객 분석</h3>
+                    <ul style="margin-left: 20px; color: #64748b;">
+                        <li>코호트 분석 (신규 고객 생존율)</li>
+                        <li>RFM 분석 (VIP 고객 세그먼트)</li>
+                        <li>고객 생애 가치 (LTV) 계산</li>
+                        <li>이탈 고객 예측 및 재방문 유도</li>
+                    </ul>
+                    <h3 style="margin: 20px 0 15px; color: #1e293b;">🍜 메뉴 최적화</h3>
+                    <ul style="margin-left: 20px; color: #64748b;">
+                        <li>메뉴별 수익성 분석 (베스트셀러 vs 저조 메뉴)</li>
+                        <li>메뉴 포트폴리오 최적화</li>
+                        <li>교차판매 분석 (함께 주문되는 조합)</li>
+                        <li>신메뉴 성과 추적</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div class="footer">
-            <p>Generated on 2026-01-13 14:29:22 | 현선이네 상도점</p>
+            <p>Generated with AI-Powered Analytics | 현선이네 상도점</p>
         </div>
     </div>
-    
-    <script>
 
-        // 1. 일별 매출 추이
-        var trace1 = {
-            x: ['10/26', '10/27', '10/28', '10/29', '10/30', '10/31', '11/01', '11/02', '11/03', '11/04', '11/05', '11/06', '11/07', '11/08', '11/09', '11/10', '11/11', '11/12', '11/13', '11/14', '11/15', '11/16', '11/17', '11/18', '11/19', '11/20', '11/21', '11/22', '11/23', '11/24'],
-            y: [0, 0, 0, 0, 0, 0, 3451150, 3584670, 2328890, 2521160, 2336160, 2667290, 2656600, 3507770, 3947350, 2423410, 2384990, 2318460, 2395070, 2550930, 3709360, 4209500, 2447430, 2469110, 2367890, 2273480, 2273480, 3578690, 3578690, 1836040],
-            type: 'scatter',
-            mode: 'lines+markers',
-            name: '실제 매출',
-            line: {
-                color: '#667eea',
-                width: 3
-            },
-            marker: {
-                size: 8,
-                color: '#667eea'
-            },
-            fill: 'tozeroy',
-            fillcolor: 'rgba(102, 126, 234, 0.1)',
-            hovertemplate: '%{x}<br>매출: %{y:,}원<extra></extra>'
-        };
-        
-        var trace2 = {
-            x: ['10/26', '10/27', '10/28', '10/29', '10/30', '10/31', '11/01', '11/02', '11/03', '11/04', '11/05', '11/06', '11/07', '11/08', '11/09', '11/10', '11/11', '11/12', '11/13', '11/14', '11/15', '11/16', '11/17', '11/18', '11/19', '11/20', '11/21', '11/22', '11/23', '11/24'],
-            y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3500000.0, 3700000.0, 2400000.0, 2200000.0, 2200000.0, 2200000.0, 2300000.0, 3500000.0, 3700000.0, 2400000.0, 2200000.0, 2200000.0, 2200000.0, 2300000.0, 3500000.0, 3700000.0, 2400000.0, 2200000.0, 2200000.0, 2200000.0, 2300000.0, 3500000.0, 3700000.0, 2400000.0],
-            type: 'scatter',
-            mode: 'lines',
-            name: '목표 매출',
-            line: {
-                color: '#f093fb',
-                width: 2,
-                dash: 'dash'
-            },
-            hovertemplate: '%{x}<br>목표: %{y:,}원<extra></extra>'
-        };
-        
-        var layout1 = {
-            hovermode: 'x unified',
-            showlegend: true,
-            legend: {
-                orientation: 'h',
-                y: 1.1
-            },
-            margin: {t: 20, b: 50, l: 60, r: 20},
-            plot_bgcolor: '#f8f9fa',
-            paper_bgcolor: 'white',
-            xaxis: {
-                gridcolor: '#e9ecef',
-                title: '날짜'
-            },
-            yaxis: {
-                gridcolor: '#e9ecef',
-                title: '매출 (원)',
-                tickformat: ','
-            }
-        };
-        
-        Plotly.newPlot('daily-sales-chart', [trace1, trace2], layout1, {responsive: true});
-        
-        // 2. 홀 vs 배달 파이 차트
-        var data2 = [{
-            values: [15488600, 66628970],
-            labels: ['홀 매출', '배달 매출'],
-            type: 'pie',
-            hole: 0.4,
-            marker: {
-                colors: ['#ff6b6b', '#4ecdc4']
-            },
-            textinfo: 'label+percent',
-            textfont: {
-                size: 14,
-                color: 'white',
-                family: 'Pretendard'
-            },
-            hovertemplate: '%{label}<br>%{value:,}원<br>%{percent}<extra></extra>'
-        }];
-        
-        var layout2 = {
-            margin: {t: 20, b: 20, l: 20, r: 20},
-            showlegend: false,
-            paper_bgcolor: 'white',
-            annotations: [{
-                text: '8211<br>만원',
-                showarrow: false,
-                font: {
-                    size: 20,
-                    color: '#1a1a2e',
-                    family: 'Pretendard',
-                    weight: 700
-                }
-            }]
-        };
-        
-        Plotly.newPlot('hall-delivery-chart', data2, layout2, {responsive: true});
-
-        // 3. 요일별 평균 매출
-        var data3 = [{
-            x: ['월', '화', '수', '목', '금', '토', '일'],
-            y: [1807154.0, 1843815.0, 1755627.5, 1833960.0, 1870252.5, 3561742.5, 3064042.0],
-            type: 'bar',
-            marker: {
-                color: [1807154.0, 1843815.0, 1755627.5, 1833960.0, 1870252.5, 3561742.5, 3064042.0],
-                colorscale: [
-                    [0, '#667eea'],
-                    [1, '#764ba2']
-                ],
-                showscale: false
-            },
-            hovertemplate: '%{x}요일<br>평균: %{y:,}원<extra></extra>'
-        }];
-        
-        var layout3 = {
-            margin: {t: 20, b: 50, l: 60, r: 20},
-            plot_bgcolor: '#f8f9fa',
-            paper_bgcolor: 'white',
-            xaxis: {
-                gridcolor: '#e9ecef',
-                title: '요일'
-            },
-            yaxis: {
-                gridcolor: '#e9ecef',
-                title: '평균 매출 (원)',
-                tickformat: ','
-            }
-        };
-        
-        Plotly.newPlot('weekday-chart', data3, layout3, {responsive: true});
-        
-        // 4. 배달 플랫폼
-        var data4 = [{
-            x: [38899057, 13166455, 11847650, 1169000, 1396308, 380229, 150500],
-            y: ['쿠팡잇츠', '배민원', '두잇', '배달의민족', '요기요', '땡겨요', '기타'],
-            type: 'bar',
-            orientation: 'h',
-            marker: {
-                color: ['#ff6b9d', '#c44569', '#ffc048', '#00d9ff', '#00b8a9', '#f8b500', '#a8e6cf']
-            },
-            hovertemplate: '%{y}<br>%{x:,}원<extra></extra>'
-        }];
-        
-        var layout4 = {
-            margin: {t: 20, b: 50, l: 80, r: 20},
-            plot_bgcolor: '#f8f9fa',
-            paper_bgcolor: 'white',
-            xaxis: {
-                gridcolor: '#e9ecef',
-                title: '매출 (원)',
-                tickformat: ','
-            },
-            yaxis: {
-                gridcolor: '#e9ecef'
-            }
-        };
-        
-        Plotly.newPlot('platform-chart', data4, layout4, {responsive: true});
-    </script>
+    <script src="dashboard.js"></script>
 </body>
 </html>
