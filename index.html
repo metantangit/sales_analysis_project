@@ -652,27 +652,30 @@ const data = {
     dates: ["11/01", "11/02", "11/03", "11/04", "11/05", "11/06", "11/07", "11/08", "11/09", "11/10", "11/11", "11/12", "11/13", "11/14", "11/15", "11/16", "11/17", "11/18", "11/19", "11/20", "11/21", "11/22", "11/23", "11/24", "11/25", "11/26", "11/27", "11/28", "11/29", "11/30"],
     sales: [3451150, 3584670, 2328890, 2521160, 2336160, 2667290, 2656600, 3507770, 3947350, 2423410, 2384990, 2318460, 2395070, 2550930, 3709360, 4209500, 2447430, 2469110, 2367890, 2273480, 2273480, 3578690, 3578690, 1836040, 2509910, 0, 2781550, 2112820, 3130560, 3502630],
     target: [3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000],
-    total: 81855040,
-    cost: 22992919,
-    grossProfit: 58862121,
-    grossMargin: 71.9,
-    deliveryFee: 6794305,
-    laborCost: 8835000,
-    operatingProfit: 43232816,
-    operatingMargin: 52.8,
-    otherExpenses: 12278256,
-    netProfit: 30954560,
-    netMargin: 37.8,
+    total: 82117570,
+    cost: 21940047,
+    grossProfit: 60177523,
+    grossMargin: 73.3,
+    deliveryFee: 23397702,
+    laborCost: 14947167,
+    utilities: 1364138,
+    operatingProfit: 20468516,
+    operatingMargin: 24.9,
+    fixedCost: 2155074,
+    ebt: 18313442,
+    vat: 3284703,
+    incomeTax: 1642351,
+    netProfit: 13386388,
+    netMargin: 16.3,
     hall: 15488600,
     delivery: 66628970,
     platforms: [
-        {name: '쿠팡잇츠', sales: 38899057, feeRate: 9.8, fee: 3812107, netSales: 35086950},
-        {name: '배민원', sales: 13166455, feeRate: 12.5, fee: 1645806, netSales: 11520649},
-        {name: '두잇', sales: 11847650, feeRate: 9.8, fee: 1161069, netSales: 10686581},
-        {name: '배달의민족', sales: 1169000, feeRate: 5.8, fee: 67802, netSales: 1101198},
-        {name: '요기요', sales: 1396308, feeRate: 5.8, fee: 80985, netSales: 1315323},
-        {name: '땡겨요', sales: 380229, feeRate: 5.0, fee: 19011, netSales: 361218},
-        {name: '기타', sales: 150500, feeRate: 5.0, fee: 7525, netSales: 142975}
+        {name: '쿠팡잇츠', sales: 38899057, feeRate: 35.0, fee: 13606820, netSales: 25292237},
+        {name: '배민+배민원', sales: 14335455, feeRate: 27.5, fee: 3948398, netSales: 10387057},
+        {name: '두잇', sales: 11847650, feeRate: 44.2, fee: 5232333, netSales: 6615317},
+        {name: '요기요', sales: 1396308, feeRate: 36.5, fee: 510151, netSales: 886157},
+        {name: '배달대행', sales: 150500, feeRate: 66.4, fee: 100000, netSales: 50500},
+        {name: '땡겨요', sales: 380229, feeRate: 0, fee: 0, netSales: 380229}
     ],
     weekdayAvg: [1807154, 1843815, 1755627, 1833960, 1870252, 3561742, 3064042]
 };
@@ -691,12 +694,12 @@ function showTab(idx) {
 
 // KPI 카드
 const kpis = [
-    {label: '총 매출', value: fmtK(data.total), unit: '만원', change: '목표 달성 100.8%', cls: 'primary'},
+    {label: '총 매출', value: fmtK(data.total), unit: '만원', change: '목표 달성 101.1%', cls: 'primary'},
     {label: '매출총이익', value: fmtK(data.grossProfit), unit: '만원', change: '', pct: data.grossMargin.toFixed(1) + '%', cls: 'success'},
     {label: '영업이익', value: fmtK(data.operatingProfit), unit: '만원', change: '', pct: data.operatingMargin.toFixed(1) + '%', cls: 'info'},
-    {label: '순이익(추정)', value: fmtK(data.netProfit), unit: '만원', change: '', pct: data.netMargin.toFixed(1) + '%', cls: 'success'},
-    {label: '배달 비중', value: '81.4', unit: '%', change: '홀: 18.6%', cls: 'warning'},
-    {label: '배달 수수료', value: fmtK(data.deliveryFee), unit: '만원', change: '매출의 8.3%', cls: 'danger'}
+    {label: '순이익', value: fmtK(data.netProfit), unit: '만원', change: '', pct: data.netMargin.toFixed(1) + '%', cls: 'success'},
+    {label: '배달 비중', value: '81.1', unit: '%', change: '홀: 18.9%', cls: 'warning'},
+    {label: '배달 수수료', value: fmtK(data.deliveryFee), unit: '만원', change: '매출의 28.5%', cls: 'danger'}
 ];
 
 document.getElementById('kpi-cards').innerHTML = kpis.map(k => `
@@ -724,9 +727,10 @@ Plotly.newPlot('daily-chart', [
 
 // 경고
 const alerts = [
+    {level: 'danger', title: '⚠️ 배달 수수료 과다', msg: '배달 수수료 2,340만원(매출의 28.5%) → 수수료율 관리 필요'},
     {level: 'danger', title: '⚠️ 쿠팡잇츠 의존도 과다', msg: '배달 매출의 58.4%가 쿠팡잇츠 집중 → 플랫폼 리스크 높음'},
-    {level: 'warning', title: '⚡ 배달 의존도 높음', msg: '배달 81.4% vs 홀 18.6% → 수수료 부담 큼'},
-    {level: 'success', title: '✅ 수익성 우수', msg: `영업이익률 ${data.operatingMargin.toFixed(1)}% → 업계 평균 대비 양호`}
+    {level: 'warning', title: '⚡ 배달 의존도 높음', msg: '배달 81.1% vs 홀 18.9% → 수수료 부담 큼'},
+    {level: 'success', title: '✅ 원가율 우수', msg: `원가율 26.7% → 업계 평균 대비 양호`}
 ];
 
 document.getElementById('alerts').innerHTML = alerts.map(a => `
@@ -743,17 +747,20 @@ document.getElementById('alerts').innerHTML = alerts.map(a => `
 Plotly.newPlot('profit-waterfall', [{
     type: 'waterfall',
     orientation: 'v',
-    x: ['매출', '원가', '매출총이익', '배달수수료', '인건비', '영업이익', '기타비용', '순이익'],
-    y: [data.total, -data.cost, 0, -data.deliveryFee, -data.laborCost, 0, -data.otherExpenses, 0],
-    measure: ['relative', 'relative', 'total', 'relative', 'relative', 'total', 'relative', 'total'],
+    x: ['매출', '원가', '매출총이익', '인건비', '배달수수료', '유틸리티', '영업이익', '고정비', '세전이익', 'VAT+세금', '순이익'],
+    y: [data.total, -data.cost, 0, -data.laborCost, -data.deliveryFee, -data.utilities, 0, -data.fixedCost, 0, -(data.vat + data.incomeTax), 0],
+    measure: ['relative', 'relative', 'total', 'relative', 'relative', 'relative', 'total', 'relative', 'total', 'relative', 'total'],
     text: [
         fmt(data.total),
         `-${fmt(data.cost)}<br>${(data.cost/data.total*100).toFixed(1)}%`,
         `${fmt(data.grossProfit)}<br>${data.grossMargin.toFixed(1)}%`,
-        `-${fmt(data.deliveryFee)}<br>${(data.deliveryFee/data.total*100).toFixed(1)}%`,
         `-${fmt(data.laborCost)}<br>${(data.laborCost/data.total*100).toFixed(1)}%`,
+        `-${fmt(data.deliveryFee)}<br>${(data.deliveryFee/data.total*100).toFixed(1)}%`,
+        `-${fmt(data.utilities)}<br>${(data.utilities/data.total*100).toFixed(1)}%`,
         `${fmt(data.operatingProfit)}<br>${data.operatingMargin.toFixed(1)}%`,
-        `-${fmt(data.otherExpenses)}<br>${(data.otherExpenses/data.total*100).toFixed(1)}%`,
+        `-${fmt(data.fixedCost)}<br>${(data.fixedCost/data.total*100).toFixed(1)}%`,
+        `${fmt(data.ebt)}<br>${(data.ebt/data.total*100).toFixed(1)}%`,
+        `-${fmt(data.vat + data.incomeTax)}<br>${((data.vat + data.incomeTax)/data.total*100).toFixed(1)}%`,
         `${fmt(data.netProfit)}<br>${data.netMargin.toFixed(1)}%`
     ],
     textposition: 'outside',
@@ -764,15 +771,16 @@ Plotly.newPlot('profit-waterfall', [{
 }], {...chartLayout, yaxis: {...chartLayout.yaxis, tickformat: ',d'}}, {responsive: true});
 
 // 비용 파이
+const totalExpenses = data.cost + data.deliveryFee + data.laborCost + data.utilities + data.fixedCost;
 Plotly.newPlot('cost-pie', [{
-    values: [data.cost, data.deliveryFee, data.laborCost, data.otherExpenses],
-    labels: ['원가 (28%)', '배달수수료 (8.3%)', '인건비 (10.8%)', '기타비용 (15%)'],
+    values: [data.cost, data.deliveryFee, data.laborCost, data.utilities + data.fixedCost],
+    labels: ['원가 (26.7%)', '배달수수료 (28.5%)', '인건비 (18.2%)', '기타비용 (4.3%)'],
     type: 'pie',
     hole: 0.5,
     marker: {colors: ['#6366f1', '#ef4444', '#f59e0b', '#8b5cf6']},
     textinfo: 'label+percent',
     textfont: {color: '#fff', size: 13}
-}], {...chartLayout, annotations: [{text: `총비용<br>${fmtK(data.cost + data.deliveryFee + data.laborCost + data.otherExpenses)}만`, showarrow: false, font: {size: 16, color: '#fff', weight: 700}}]}, {responsive: true});
+}], {...chartLayout, annotations: [{text: `총비용<br>${fmtK(totalExpenses)}만`, showarrow: false, font: {size: 16, color: '#fff', weight: 700}}]}, {responsive: true});
 
 // 수익성 지표
 Plotly.newPlot('margin-chart', [{
@@ -869,7 +877,8 @@ Plotly.newPlot('avg-price-chart', [{
 
 // 추천사항
 const recs = [
-    {priority: 'high', title: '배달 플랫폼 분산 필요', desc: '쿠팡잇츠 58% → 배민 비중을 30%까지 늘리기', impact: '수수료 절감: 약 467,000원/월'},
+    {priority: 'high', title: '배달 수수료 긴급 최적화', desc: '현재 배달 수수료 2,340만원(매출의 28.5%) → 저수수료 플랫폼 비중 확대', impact: '수수료율 5%p 절감시 월 410만원 절감'},
+    {priority: 'high', title: '두잇 플랫폼 재검토', desc: '두잇 수수료율 44.2% → 타 플랫폼 대비 2배 이상 높음', impact: '두잇 매출을 배민으로 전환시 월 200만원 절감'},
     {priority: 'medium', title: '홀 매출 증대 전략', desc: '홀 매출 비중을 25-30%까지 올리기', impact: '수수료 없는 순수익 증가 + 단골 고객 확보'}
 ];
 
