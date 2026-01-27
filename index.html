@@ -3,897 +3,511 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>현선이네 상도점 - 프리미엄 경영 분석</title>
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>다다름 FNC</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0f0f23;
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
             color: #fff;
-            min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
         }
-        
-        /* 애니메이션 배경 */
-        .bg-gradient {
+
+        /* 네비게이션 */
+        nav {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.15), transparent 50%),
-                        radial-gradient(ellipse at 80% 50%, rgba(139, 92, 246, 0.15), transparent 50%),
-                        radial-gradient(ellipse at 20% 80%, rgba(236, 72, 153, 0.15), transparent 50%);
-            z-index: 0;
-            animation: pulse 10s ease-in-out infinite;
+            z-index: 100;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
         }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
-        }
-        
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* 프리미엄 헤더 */
-        .hero {
-            text-align: center;
-            padding: 60px 20px;
-            margin-bottom: 50px;
-            position: relative;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            border-radius: 30px;
-            filter: blur(40px);
-            z-index: -1;
-        }
-        
-        .hero h1 {
-            font-size: 56px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b35, #f7c59f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            letter-spacing: -2px;
         }
-        
-        .hero .subtitle {
-            font-size: 20px;
-            color: #94a3b8;
-            font-weight: 500;
-            margin-bottom: 30px;
-        }
-        
-        .hero .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #818cf8;
-            backdrop-filter: blur(10px);
-        }
-        
-        /* Glass 탭 */
-        .tabs {
+
+        .nav-links {
             display: flex;
-            gap: 12px;
-            padding: 8px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(20px);
-            margin-bottom: 40px;
-            overflow-x: auto;
+            gap: 32px;
         }
-        
-        .tab-btn {
-            padding: 14px 28px;
-            border: none;
-            background: transparent;
-            color: #94a3b8;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 14px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        /* 히어로 */
+        .hero {
+            height: 100vh;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
-        
-        .tab-btn::before {
-            content: '';
+
+        /* 애니메이션 배경 */
+        .hero-bg {
             position: absolute;
             inset: 0;
-            border-radius: 14px;
-            padding: 1px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.3s;
+            z-index: 0;
         }
-        
-        .tab-btn:hover {
-            color: #e2e8f0;
-            transform: translateY(-2px);
-        }
-        
-        .tab-btn.active {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
-        }
-        
-        .tab-content {
-            display: none;
-            animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* KPI 카드 */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-        
-        .kpi-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 28px;
-            backdrop-filter: blur(20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .kpi-card::before {
-            content: '';
+
+        .gradient-sphere {
             position: absolute;
-            top: 0;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .sphere-1 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            top: -150px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .sphere-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -3s;
+        }
+
+        .sphere-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            top: 40%;
+            left: 30%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* 3D 텍스트 */
+        .hero-text {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: clamp(80px, 15vw, 180px);
+            font-weight: 900;
+            letter-spacing: -8px;
+            line-height: 0.9;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 50%, #ff6b35 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 80px rgba(255,107,53,0.3);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 20px rgba(255,107,53,0.3)); }
+            to { filter: drop-shadow(0 0 40px rgba(255,107,53,0.5)); }
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 24px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* 하단 오버레이 그라디언트 */
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
+            height: 300px;
+            background: linear-gradient(to top, #0a0a0a 0%, transparent 100%);
+            z-index: 2;
+            pointer-events: none;
         }
-        
-        .kpi-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-        }
-        
-        .kpi-card:hover::before {
-            opacity: 1;
-        }
-        
-        .kpi-card.success { --glow-color: #10b981; }
-        .kpi-card.warning { --glow-color: #f59e0b; }
-        .kpi-card.danger { --glow-color: #ef4444; }
-        .kpi-card.primary { --glow-color: #6366f1; }
-        .kpi-card.info { --glow-color: #06b6d4; }
-        
-        .kpi-label {
-            font-size: 13px;
-            color: #94a3b8;
-            font-weight: 600;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .kpi-value {
-            font-size: 36px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 8px;
-            line-height: 1;
-        }
-        
-        .kpi-value .small {
-            font-size: 20px;
-            color: #94a3b8;
-            font-weight: 600;
-        }
-        
-        .kpi-change {
-            font-size: 14px;
-            color: #64748b;
-            font-weight: 500;
-        }
-        
-        .kpi-percent {
-            display: inline-block;
-            padding: 4px 12px;
-            background: rgba(99, 102, 241, 0.15);
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #818cf8;
-            margin-left: 8px;
-        }
-        
-        /* 차트 박스 */
-        .chart-box {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 32px;
-            margin-bottom: 30px;
-            backdrop-filter: blur(20px);
-            transition: all 0.3s;
-        }
-        
-        .chart-box:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .chart-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 24px;
-            padding-left: 16px;
-            border-left: 4px solid #6366f1;
-        }
-        
-        /* 알림 */
-        .alert {
-            padding: 20px 24px;
-            border-radius: 16px;
-            margin-bottom: 16px;
+
+        /* 스크롤 힌트 */
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
             display: flex;
-            align-items: start;
-            gap: 16px;
-            border: 1px solid;
-            backdrop-filter: blur(20px);
-        }
-        
-        .alert.danger {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-        
-        .alert.warning {
-            background: rgba(245, 158, 11, 0.1);
-            border-color: rgba(245, 158, 11, 0.3);
-        }
-        
-        .alert.success {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-        
-        .alert-icon {
-            font-size: 24px;
-            flex-shrink: 0;
-        }
-        
-        .alert-title {
-            font-weight: 700;
-            margin-bottom: 6px;
-            font-size: 16px;
-        }
-        
-        .alert-message {
-            font-size: 14px;
-            color: #cbd5e1;
-            line-height: 1.6;
-        }
-        
-        /* 추천 카드 */
-        .recommendation {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(20px);
-            transition: all 0.3s;
-        }
-        
-        .recommendation:hover {
-            transform: translateX(8px);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .recommendation.high {
-            border-left: 4px solid #ef4444;
-        }
-        
-        .recommendation.medium {
-            border-left: 4px solid #f59e0b;
-        }
-        
-        .rec-header {
-            display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 12px;
-            margin-bottom: 16px;
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            letter-spacing: 2px;
+            animation: bounce 2s infinite;
         }
-        
-        .rec-priority {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
         }
-        
-        .rec-priority.high {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
+
+        .scroll-hint .arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid rgba(255,255,255,0.3);
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            transform: rotate(45deg);
         }
-        
-        .rec-priority.medium {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
+
+        /* 인트로 섹션 */
+        .intro {
+            padding: 120px 40px;
+            text-align: center;
+            position: relative;
         }
-        
-        .rec-title {
+
+        .intro h2 {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+        }
+
+        .intro h2 span {
+            background: linear-gradient(135deg, #ff6b35, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .intro p {
             font-size: 18px;
-            font-weight: 700;
-            color: #fff;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
         }
-        
-        .rec-desc {
-            color: #94a3b8;
-            font-size: 15px;
-            margin-bottom: 16px;
-            line-height: 1.6;
+
+        /* 서비스 그리드 */
+        .services {
+            padding: 80px 40px 120px;
         }
-        
-        .rec-impact {
-            background: rgba(99, 102, 241, 0.15);
-            padding: 14px 18px;
-            border-radius: 12px;
-            font-size: 14px;
-            color: #a5b4fc;
-            font-weight: 600;
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        
-        /* 테이블 */
-        .platform-table {
-            width: 100%;
-            border-collapse: collapse;
+
+        @media (max-width: 1024px) {
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        
-        .platform-table th {
-            text-align: left;
-            padding: 16px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #94a3b8;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+
+        @media (max-width: 600px) {
+            .services-grid { grid-template-columns: 1fr; }
         }
-        
-        .platform-table td {
-            padding: 20px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #cbd5e1;
-        }
-        
-        .platform-table tr {
+
+        .service-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 32px;
             transition: all 0.3s;
         }
-        
-        .platform-table tr:hover {
-            background: rgba(99, 102, 241, 0.05);
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 107, 53, 0.3);
+            background: rgba(255, 107, 53, 0.05);
         }
-        
-        .platform-name {
-            font-weight: 700;
-            color: #fff;
-            font-size: 16px;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
-        }
-        
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 30px;
-        }
-        
-        .guide-section {
-            padding: 24px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 16px;
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
             margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(255,107,53,0.05));
+            border-radius: 14px;
+            color: #ff6b35;
         }
-        
-        .guide-section h3 {
-            margin-bottom: 16px;
-            color: #fff;
+
+        .service-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .service-card h3 {
             font-size: 18px;
             font-weight: 700;
-        }
-        
-        .guide-section ul {
-            margin-left: 20px;
-            color: #94a3b8;
-            line-height: 2;
-        }
-        
-        .guide-section li {
             margin-bottom: 8px;
         }
-        
-        .footer {
-            text-align: center;
-            color: #64748b;
-            margin-top: 80px;
-            padding: 40px 20px;
+
+        .service-card p {
             font-size: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #666;
+            line-height: 1.6;
         }
-        
-        /* 반응형 */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 36px; }
-            .tabs { overflow-x: scroll; }
-            .kpi-grid { grid-template-columns: 1fr; }
-            .grid-2 { grid-template-columns: 1fr; }
+
+        /* 케이스 스터디 */
+        .case {
+            padding: 120px 40px;
+            background: linear-gradient(180deg, #0a0a0a 0%, #0f0f1a 100%);
         }
-        
-        /* Plotly 차트 커스터마이징 */
-        .js-plotly-plot {
-            border-radius: 12px;
-            overflow: hidden;
+
+        .case-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .case-label {
+            font-size: 12px;
+            color: #ff6b35;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .case-title {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+        }
+
+        .case-desc {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 600px;
+            margin-bottom: 48px;
+        }
+
+        .case-stats {
+            display: flex;
+            gap: 48px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b35, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 36px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+        }
+
+        /* CTA */
+        .cta {
+            padding: 120px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 70%);
+        }
+
+        .cta h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .cta p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        /* 푸터 */
+        footer {
+            padding: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            color: #444;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-<div class="bg-gradient"></div>
-<div class="container">
-    <div class="hero">
-        <h1>현선이네 상도점</h1>
-        <p class="subtitle">AI 기반 요식업 전문 경영 분석</p>
-        <div class="badge">
-            <span>📊</span>
-            <span>2025년 11월 데이터</span>
+    <nav>
+        <div class="logo">다다름 FNC</div>
+        <div class="nav-links">
+            <a href="#services">서비스</a>
+            <a href="#case">포트폴리오</a>
+            <a href="executive.html">전체 매장 분석</a>
+            <a href="store-sangdo.html">상도점 분석</a>
         </div>
-    </div>
+    </nav>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="showTab(0)">📊 경영 대시보드</button>
-        <button class="tab-btn" onclick="showTab(1)">💰 수익성 분석</button>
-        <button class="tab-btn" onclick="showTab(2)">📱 배달 플랫폼</button>
-        <button class="tab-btn" onclick="showTab(3)">⚙️ 운영 효율</button>
-        <button class="tab-btn" onclick="showTab(4)">🎯 AI 추천</button>
-    </div>
+    <!-- 히어로 -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="gradient-sphere sphere-1"></div>
+            <div class="gradient-sphere sphere-2"></div>
+            <div class="gradient-sphere sphere-3"></div>
+        </div>
+        <div class="hero-text">
+            <h1 class="hero-title">다다름</h1>
+            <p class="hero-subtitle">Food & Consulting</p>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="scroll-hint">
+            <span>SCROLL</span>
+            <div class="arrow"></div>
+        </div>
+    </section>
 
-    <!-- 탭 1 -->
-    <div class="tab-content active" id="tab-0">
-        <div id="kpi-cards" class="kpi-grid"></div>
-        <div class="chart-box">
-            <div class="chart-title">일별 매출 추이</div>
-            <div id="daily-chart"></div>
-        </div>
-        <div id="alerts"></div>
-    </div>
+    <!-- 인트로 -->
+    <section class="intro">
+        <h2>맛있는 성공을 <span>함께</span></h2>
+        <p>데이터 기반 요식업 컨설팅. 매출 분석부터 브랜드 성장까지, 당신의 성공 파트너가 되겠습니다.</p>
+    </section>
 
-    <!-- 탭 2 -->
-    <div class="tab-content" id="tab-1">
-        <div class="chart-box">
-            <div class="chart-title">수익 구조 분석 (Profit & Loss)</div>
-            <div id="profit-waterfall"></div>
-        </div>
-        <div class="grid-2">
-            <div class="chart-box">
-                <div class="chart-title">비용 구성</div>
-                <div id="cost-pie"></div>
+    <!-- 서비스 -->
+    <section class="services" id="services">
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                </div>
+                <h3>매출 분석</h3>
+                <p>POS, 배달앱 데이터 통합 분석</p>
             </div>
-            <div class="chart-box">
-                <div class="chart-title">수익성 지표</div>
-                <div id="margin-chart"></div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                </div>
+                <h3>수익 최적화</h3>
+                <p>플랫폼 수수료, 원가율 관리</p>
             </div>
-        </div>
-        <div class="chart-box">
-            <div class="chart-title">배달 플랫폼별 수수료 부담</div>
-            <div id="fee-chart"></div>
-        </div>
-    </div>
-
-    <!-- 탭 3 -->
-    <div class="tab-content" id="tab-2">
-        <div class="chart-box">
-            <div class="chart-title">플랫폼별 상세 비교</div>
-            <table class="platform-table" id="platform-table"></table>
-        </div>
-        <div class="grid-2">
-            <div class="chart-box">
-                <div class="chart-title">플랫폼별 점유율</div>
-                <div id="platform-pie"></div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+                </div>
+                <h3>메뉴 전략</h3>
+                <p>베스트셀러 분석, 가격 전략</p>
             </div>
-            <div class="chart-box">
-                <div class="chart-title">플랫폼별 순수익 (수수료 제외)</div>
-                <div id="platform-profit"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 탭 4 -->
-    <div class="tab-content" id="tab-3">
-        <div class="grid-2">
-            <div class="chart-box">
-                <div class="chart-title">요일별 평균 매출</div>
-                <div id="weekday-chart"></div>
-            </div>
-            <div class="chart-box">
-                <div class="chart-title">홀 vs 배달 비교</div>
-                <div id="channel-chart"></div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3>성장 전략</h3>
+                <p>브랜드 확장, 프랜차이즈화</p>
             </div>
         </div>
-        <div class="chart-box">
-            <div class="chart-title">객단가 분석</div>
-            <div id="avg-price-chart"></div>
-        </div>
-    </div>
+    </section>
 
-    <!-- 탭 5 -->
-    <div class="tab-content" id="tab-4">
-        <div class="chart-box">
-            <div class="chart-title">우선순위 액션 아이템</div>
-            <div id="recommendations"></div>
-        </div>
-        <div class="chart-box">
-            <div class="chart-title">1년 데이터 확보시 가능한 고급 분석</div>
-            <div class="guide-section">
-                <h3>📅 시계열 분석</h3>
-                <ul>
-                    <li>계절별 매출 패턴 및 성수기/비수기 식별</li>
-                    <li>학기 중 vs 방학 매출 변화 (대학가 특성)</li>
-                    <li>월별/분기별 성장률 (MoM, QoQ, YoY)</li>
-                    <li>명절 및 이벤트 영향 분석</li>
-                </ul>
+    <!-- 케이스 스터디 -->
+    <section class="case" id="case">
+        <div class="case-container">
+            <div class="case-label">Success Story</div>
+            <h2 class="case-title">현선이네 떡볶이 상도점</h2>
+            <p class="case-desc">배달 중심 매장의 수익성 개선 프로젝트. 6개 플랫폼 수수료 분석으로 최적의 채널 믹스를 도출하고 월 순이익 1,300만원 달성.</p>
+
+            <div class="case-stats">
+                <div class="stat">
+                    <div class="stat-value">8,211만</div>
+                    <div class="stat-label">월 매출</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">16.3%</div>
+                    <div class="stat-label">순이익률</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">101%</div>
+                    <div class="stat-label">목표달성</div>
+                </div>
             </div>
-            <div class="guide-section">
-                <h3>🎯 예측 모델</h3>
-                <ul>
-                    <li>AI 기반 매출 예측 (ARIMA, Prophet)</li>
-                    <li>수요 예측을 통한 재고 최적화</li>
-                    <li>인력 배치 최적화</li>
-                    <li>이상 거래 자동 탐지</li>
-                </ul>
-            </div>
-            <div class="guide-section">
-                <h3>👥 고객 분석</h3>
-                <ul>
-                    <li>코호트 분석 (신규 고객 생존율)</li>
-                    <li>RFM 분석 (VIP 고객 세그먼트)</li>
-                    <li>고객 생애 가치 (LTV) 계산</li>
-                    <li>이탈 고객 예측 및 재방문 유도</li>
-                </ul>
-            </div>
-            <div class="guide-section">
-                <h3>🍜 메뉴 최적화</h3>
-                <ul>
-                    <li>메뉴별 수익성 분석 (베스트셀러 vs 저조 메뉴)</li>
-                    <li>메뉴 포트폴리오 최적화</li>
-                    <li>교차판매 분석 (함께 주문되는 조합)</li>
-                    <li>신메뉴 성과 추적</li>
-                </ul>
-            </div>
+
+            <a href="store-sangdo.html" class="btn">상도점 분석 보기 →</a>
         </div>
-    </div>
+    </section>
 
-    <div class="footer">
-        <p>Generated with AI-Powered Analytics • 현선이네 상도점</p>
-        <p style="margin-top: 10px; color: #475569;">Powered by Claude Sonnet 4.5</p>
-    </div>
-</div>
+    <!-- CTA -->
+    <section class="cta" id="contact">
+        <h2>함께 성장할 준비 되셨나요?</h2>
+        <p>무료 상담으로 매장의 가능성을 확인해보세요</p>
+        <a href="mailto:contact@dadarm.com" class="btn">상담 신청</a>
+    </section>
 
-<script>
-const data = {
-    dates: ["11/01", "11/02", "11/03", "11/04", "11/05", "11/06", "11/07", "11/08", "11/09", "11/10", "11/11", "11/12", "11/13", "11/14", "11/15", "11/16", "11/17", "11/18", "11/19", "11/20", "11/21", "11/22", "11/23", "11/24", "11/25", "11/26", "11/27", "11/28", "11/29", "11/30"],
-    sales: [3451150, 3584670, 2328890, 2521160, 2336160, 2667290, 2656600, 3507770, 3947350, 2423410, 2384990, 2318460, 2395070, 2550930, 3709360, 4209500, 2447430, 2469110, 2367890, 2273480, 2273480, 3578690, 3578690, 1836040, 2509910, 0, 2781550, 2112820, 3130560, 3502630],
-    target: [3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000],
-    total: 82117570,
-    cost: 21940047,
-    grossProfit: 60177523,
-    grossMargin: 73.3,
-    deliveryFee: 23397702,
-    laborCost: 14947167,
-    utilities: 1364138,
-    operatingProfit: 20468516,
-    operatingMargin: 24.9,
-    fixedCost: 2155074,
-    ebt: 18313442,
-    vat: 3284703,
-    incomeTax: 1642351,
-    netProfit: 13386388,
-    netMargin: 16.3,
-    hall: 15488600,
-    delivery: 66628970,
-    platforms: [
-        {name: '쿠팡잇츠', sales: 38899057, feeRate: 35.0, fee: 13606820, netSales: 25292237},
-        {name: '배민+배민원', sales: 14335455, feeRate: 27.5, fee: 3948398, netSales: 10387057},
-        {name: '두잇', sales: 11847650, feeRate: 44.2, fee: 5232333, netSales: 6615317},
-        {name: '요기요', sales: 1396308, feeRate: 36.5, fee: 510151, netSales: 886157},
-        {name: '배달대행', sales: 150500, feeRate: 66.4, fee: 100000, netSales: 50500},
-        {name: '땡겨요', sales: 380229, feeRate: 0, fee: 0, netSales: 380229}
-    ],
-    weekdayAvg: [1807154, 1843815, 1755627, 1833960, 1870252, 3561742, 3064042]
-};
-
-const fmt = (n) => Math.round(n).toLocaleString('ko-KR');
-const fmtK = (n) => Math.floor(n/10000);
-
-function showTab(idx) {
-    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-        btn.classList.toggle('active', i === idx);
-    });
-    document.querySelectorAll('.tab-content').forEach((content, i) => {
-        content.classList.toggle('active', i === idx);
-    });
-}
-
-// KPI 카드
-const kpis = [
-    {label: '총 매출', value: fmtK(data.total), unit: '만원', change: '목표 달성 101.1%', cls: 'primary'},
-    {label: '매출총이익', value: fmtK(data.grossProfit), unit: '만원', change: '', pct: data.grossMargin.toFixed(1) + '%', cls: 'success'},
-    {label: '영업이익', value: fmtK(data.operatingProfit), unit: '만원', change: '', pct: data.operatingMargin.toFixed(1) + '%', cls: 'info'},
-    {label: '순이익', value: fmtK(data.netProfit), unit: '만원', change: '', pct: data.netMargin.toFixed(1) + '%', cls: 'success'},
-    {label: '배달 비중', value: '81.1', unit: '%', change: '홀: 18.9%', cls: 'warning'},
-    {label: '배달 수수료', value: fmtK(data.deliveryFee), unit: '만원', change: '매출의 28.5%', cls: 'danger'}
-];
-
-document.getElementById('kpi-cards').innerHTML = kpis.map(k => `
-    <div class="kpi-card ${k.cls}">
-        <div class="kpi-label">${k.label}</div>
-        <div class="kpi-value">${k.value}<span class="small">${k.unit}</span>${k.pct ? '<span class="kpi-percent">' + k.pct + '</span>' : ''}</div>
-        <div class="kpi-change">${k.change}</div>
-    </div>
-`).join('');
-
-const chartLayout = {
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    font: {color: '#94a3b8', family: 'Inter'},
-    xaxis: {gridcolor: 'rgba(255,255,255,0.05)', showgrid: true},
-    yaxis: {gridcolor: 'rgba(255,255,255,0.05)', showgrid: true, tickformat: ',d'},
-    margin: {t: 20, b: 50, l: 70, r: 20}
-};
-
-// 일별 매출
-Plotly.newPlot('daily-chart', [
-    {x: data.dates, y: data.sales, type: 'scatter', mode: 'lines+markers', name: '실제', line: {color: '#6366f1', width: 3}, marker: {size: 6}, fill: 'tozeroy', fillcolor: 'rgba(99, 102, 241, 0.2)'},
-    {x: data.dates, y: data.target, type: 'scatter', mode: 'lines', name: '목표', line: {color: '#f59e0b', width: 2, dash: 'dash'}}
-], {...chartLayout, showlegend: true, legend: {orientation: 'h', y: 1.1, font: {color: '#cbd5e1'}}}, {responsive: true});
-
-// 경고
-const alerts = [
-    {level: 'danger', title: '⚠️ 배달 수수료 과다', msg: '배달 수수료 2,340만원(매출의 28.5%) → 수수료율 관리 필요'},
-    {level: 'danger', title: '⚠️ 쿠팡잇츠 의존도 과다', msg: '배달 매출의 58.4%가 쿠팡잇츠 집중 → 플랫폼 리스크 높음'},
-    {level: 'warning', title: '⚡ 배달 의존도 높음', msg: '배달 81.1% vs 홀 18.9% → 수수료 부담 큼'},
-    {level: 'success', title: '✅ 원가율 우수', msg: `원가율 26.7% → 업계 평균 대비 양호`}
-];
-
-document.getElementById('alerts').innerHTML = alerts.map(a => `
-    <div class="alert ${a.level}">
-        <div class="alert-icon">${a.level === 'danger' ? '⚠️' : a.level === 'warning' ? '⚡' : '✅'}</div>
-        <div>
-            <div class="alert-title">${a.title}</div>
-            <div class="alert-message">${a.msg}</div>
-        </div>
-    </div>
-`).join('');
-
-// 수익 워터폴
-Plotly.newPlot('profit-waterfall', [{
-    type: 'waterfall',
-    orientation: 'v',
-    x: ['매출', '원가', '매출총이익', '인건비', '배달수수료', '유틸리티', '영업이익', '고정비', '세전이익', 'VAT+세금', '순이익'],
-    y: [data.total, -data.cost, 0, -data.laborCost, -data.deliveryFee, -data.utilities, 0, -data.fixedCost, 0, -(data.vat + data.incomeTax), 0],
-    measure: ['relative', 'relative', 'total', 'relative', 'relative', 'relative', 'total', 'relative', 'total', 'relative', 'total'],
-    text: [
-        fmt(data.total),
-        `-${fmt(data.cost)}<br>${(data.cost/data.total*100).toFixed(1)}%`,
-        `${fmt(data.grossProfit)}<br>${data.grossMargin.toFixed(1)}%`,
-        `-${fmt(data.laborCost)}<br>${(data.laborCost/data.total*100).toFixed(1)}%`,
-        `-${fmt(data.deliveryFee)}<br>${(data.deliveryFee/data.total*100).toFixed(1)}%`,
-        `-${fmt(data.utilities)}<br>${(data.utilities/data.total*100).toFixed(1)}%`,
-        `${fmt(data.operatingProfit)}<br>${data.operatingMargin.toFixed(1)}%`,
-        `-${fmt(data.fixedCost)}<br>${(data.fixedCost/data.total*100).toFixed(1)}%`,
-        `${fmt(data.ebt)}<br>${(data.ebt/data.total*100).toFixed(1)}%`,
-        `-${fmt(data.vat + data.incomeTax)}<br>${((data.vat + data.incomeTax)/data.total*100).toFixed(1)}%`,
-        `${fmt(data.netProfit)}<br>${data.netMargin.toFixed(1)}%`
-    ],
-    textposition: 'outside',
-    connector: {line: {color: 'rgba(148, 163, 184, 0.3)'}},
-    decreasing: {marker: {color: '#ef4444'}},
-    increasing: {marker: {color: '#10b981'}},
-    totals: {marker: {color: '#6366f1'}}
-}], {...chartLayout, yaxis: {...chartLayout.yaxis, tickformat: ',d'}}, {responsive: true});
-
-// 비용 파이
-const totalExpenses = data.cost + data.deliveryFee + data.laborCost + data.utilities + data.fixedCost;
-Plotly.newPlot('cost-pie', [{
-    values: [data.cost, data.deliveryFee, data.laborCost, data.utilities + data.fixedCost],
-    labels: ['원가 (26.7%)', '배달수수료 (28.5%)', '인건비 (18.2%)', '기타비용 (4.3%)'],
-    type: 'pie',
-    hole: 0.5,
-    marker: {colors: ['#6366f1', '#ef4444', '#f59e0b', '#8b5cf6']},
-    textinfo: 'label+percent',
-    textfont: {color: '#fff', size: 13}
-}], {...chartLayout, annotations: [{text: `총비용<br>${fmtK(totalExpenses)}만`, showarrow: false, font: {size: 16, color: '#fff', weight: 700}}]}, {responsive: true});
-
-// 수익성 지표
-Plotly.newPlot('margin-chart', [{
-    x: ['매출총이익률', '영업이익률', '순이익률'],
-    y: [data.grossMargin, data.operatingMargin, data.netMargin],
-    type: 'bar',
-    marker: {color: ['#10b981', '#6366f1', '#8b5cf6']},
-    text: [data.grossMargin.toFixed(1) + '%', data.operatingMargin.toFixed(1) + '%', data.netMargin.toFixed(1) + '%'],
-    textposition: 'outside',
-    textfont: {color: '#fff', size: 16, weight: 700}
-}], {...chartLayout, yaxis: {...chartLayout.yaxis, ticksuffix: '%', range: [0, 80]}}, {responsive: true});
-
-// 수수료 차트
-Plotly.newPlot('fee-chart', [
-    {x: data.platforms.map(p => p.name), y: data.platforms.map(p => p.sales), name: '매출', type: 'bar', marker: {color: '#6366f1'}},
-    {x: data.platforms.map(p => p.name), y: data.platforms.map(p => p.fee), name: '수수료', type: 'bar', marker: {color: '#ef4444'}}
-], {...chartLayout, barmode: 'group', legend: {orientation: 'h', y: 1.1, font: {color: '#cbd5e1'}}}, {responsive: true});
-
-// 플랫폼 테이블
-const totalPlatformSales = data.platforms.reduce((sum, p) => sum + p.sales, 0);
-document.getElementById('platform-table').innerHTML = `
-    <thead>
-        <tr>
-            <th>플랫폼</th>
-            <th>매출</th>
-            <th>수수료율</th>
-            <th>수수료</th>
-            <th>실수익</th>
-            <th>점유율</th>
-        </tr>
-    </thead>
-    <tbody>
-        ${data.platforms.map(p => `
-            <tr>
-                <td><span class="platform-name">${p.name}</span></td>
-                <td>${fmt(p.sales)}원</td>
-                <td><span class="badge">${p.feeRate}%</span></td>
-                <td style="color: #fca5a5;">${fmt(p.fee)}원</td>
-                <td style="color: #86efac; font-weight: 700;">${fmt(p.netSales)}원</td>
-                <td>${(p.sales / totalPlatformSales * 100).toFixed(1)}%</td>
-            </tr>
-        `).join('')}
-    </tbody>
-`;
-
-// 플랫폼 파이
-Plotly.newPlot('platform-pie', [{
-    values: data.platforms.map(p => p.sales),
-    labels: data.platforms.map(p => p.name),
-    type: 'pie',
-    hole: 0.5,
-    marker: {colors: ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#64748b']},
-    textfont: {color: '#fff'}
-}], {...chartLayout, showlegend: true, legend: {font: {color: '#cbd5e1'}}}, {responsive: true});
-
-// 플랫폼 순수익
-Plotly.newPlot('platform-profit', [{
-    x: data.platforms.map(p => p.netSales),
-    y: data.platforms.map(p => p.name),
-    type: 'bar',
-    orientation: 'h',
-    marker: {color: data.platforms.map(p => p.netSales), colorscale: [[0, '#ef4444'], [1, '#10b981']], showscale: false}
-}], {...chartLayout, xaxis: {...chartLayout.xaxis, tickformat: ',d'}}, {responsive: true});
-
-// 요일별
-Plotly.newPlot('weekday-chart', [{
-    x: ['월', '화', '수', '목', '금', '토', '일'],
-    y: data.weekdayAvg,
-    type: 'bar',
-    marker: {color: data.weekdayAvg, colorscale: [[0, '#6366f1'], [1, '#8b5cf6']], showscale: false}
-}], chartLayout, {responsive: true});
-
-// 홀 vs 배달
-Plotly.newPlot('channel-chart', [{
-    values: [data.hall, data.delivery],
-    labels: ['홀 매출', '배달 매출'],
-    type: 'pie',
-    hole: 0.6,
-    marker: {colors: ['#10b981', '#6366f1']},
-    textinfo: 'label+percent',
-    textfont: {color: '#fff', size: 14}
-}], {...chartLayout, annotations: [{text: `총 ${fmtK(data.hall + data.delivery)}만`, showarrow: false, font: {size: 18, color: '#fff', weight: 700}}]}, {responsive: true});
-
-// 객단가
-Plotly.newPlot('avg-price-chart', [{
-    x: ['홀 객단가', '배달 객단가'],
-    y: [14248, 15271],
-    type: 'bar',
-    marker: {color: ['#10b981', '#6366f1']},
-    text: ['14,248원', '15,271원'],
-    textposition: 'outside',
-    textfont: {color: '#fff', size: 16}
-}], chartLayout, {responsive: true});
-
-// 추천사항
-const recs = [
-    {priority: 'high', title: '배달 수수료 긴급 최적화', desc: '현재 배달 수수료 2,340만원(매출의 28.5%) → 저수수료 플랫폼 비중 확대', impact: '수수료율 5%p 절감시 월 410만원 절감'},
-    {priority: 'high', title: '두잇 플랫폼 재검토', desc: '두잇 수수료율 44.2% → 타 플랫폼 대비 2배 이상 높음', impact: '두잇 매출을 배민으로 전환시 월 200만원 절감'},
-    {priority: 'medium', title: '홀 매출 증대 전략', desc: '홀 매출 비중을 25-30%까지 올리기', impact: '수수료 없는 순수익 증가 + 단골 고객 확보'}
-];
-
-document.getElementById('recommendations').innerHTML = recs.map(r => `
-    <div class="recommendation ${r.priority}">
-        <div class="rec-header">
-            <span class="rec-priority ${r.priority}">${r.priority === 'high' ? '긴급' : '권장'}</span>
-            <span class="rec-title">${r.title}</span>
-        </div>
-        <div class="rec-desc">${r.desc}</div>
-        <div class="rec-impact">💡 예상 효과: ${r.impact}</div>
-    </div>
-`).join('');
-
-console.log('✅ 프리미엄 대시보드 로드 완료!');
-</script>
+    <footer>
+        © 2025 다다름 FNC. All rights reserved.
+    </footer>
 </body>
 </html>
