@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다다름 FNC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* 네비게이션 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b35, #f7c59f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        /* 히어로 */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* 애니메이션 배경 */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .gradient-sphere {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .sphere-1 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            top: -150px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .sphere-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -3s;
+        }
+
+        .sphere-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            top: 40%;
+            left: 30%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* 3D 텍스트 */
+        .hero-text {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: clamp(80px, 15vw, 180px);
+            font-weight: 900;
+            letter-spacing: -8px;
+            line-height: 0.9;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 50%, #ff6b35 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 80px rgba(255,107,53,0.3);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 20px rgba(255,107,53,0.3)); }
+            to { filter: drop-shadow(0 0 40px rgba(255,107,53,0.5)); }
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 24px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* 하단 오버레이 그라디언트 */
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background: linear-gradient(to top, #0a0a0a 0%, transparent 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* 스크롤 힌트 */
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            letter-spacing: 2px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        .scroll-hint .arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid rgba(255,255,255,0.3);
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            transform: rotate(45deg);
+        }
+
+        /* 인트로 섹션 */
+        .intro {
+            padding: 120px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .intro h2 {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+        }
+
+        .intro h2 span {
+            background: linear-gradient(135deg, #ff6b35, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .intro p {
+            font-size: 18px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* 서비스 그리드 */
+        .services {
+            padding: 80px 40px 120px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1024px) {
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .services-grid { grid-template-columns: 1fr; }
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 107, 53, 0.3);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(255,107,53,0.05));
+            border-radius: 14px;
+            color: #ff6b35;
+        }
+
+        .service-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .service-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .service-card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 케이스 스터디 */
+        .case {
+            padding: 120px 40px;
+            background: linear-gradient(180deg, #0a0a0a 0%, #0f0f1a 100%);
+        }
+
+        .case-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .case-label {
+            font-size: 12px;
+            color: #ff6b35;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .case-title {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+        }
+
+        .case-desc {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 600px;
+            margin-bottom: 48px;
+        }
+
+        .case-stats {
+            display: flex;
+            gap: 48px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b35, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 36px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+        }
+
+        /* CTA */
+        .cta {
+            padding: 120px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 70%);
+        }
+
+        .cta h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .cta p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        /* 푸터 */
+        footer {
+            padding: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            color: #444;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">다다름 FNC</div>
+        <div class="nav-links">
+            <a href="#services">서비스</a>
+            <a href="#case">포트폴리오</a>
+            <a href="executive.html">전체 매장 분석</a>
+            <a href="store-sangdo.html">상도점 분석</a>
+        </div>
+    </nav>
+
+    <!-- 히어로 -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="gradient-sphere sphere-1"></div>
+            <div class="gradient-sphere sphere-2"></div>
+            <div class="gradient-sphere sphere-3"></div>
+        </div>
+        <div class="hero-text">
+            <h1 class="hero-title">다다름</h1>
+            <p class="hero-subtitle">Food & Consulting</p>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="scroll-hint">
+            <span>SCROLL</span>
+            <div class="arrow"></div>
+        </div>
+    </section>
+
+    <!-- 인트로 -->
+    <section class="intro">
+        <h2>맛있는 성공을 <span>함께</span></h2>
+        <p>데이터 기반 요식업 컨설팅. 매출 분석부터 브랜드 성장까지, 당신의 성공 파트너가 되겠습니다.</p>
+    </section>
+
+    <!-- 서비스 -->
+    <section class="services" id="services">
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                </div>
+                <h3>매출 분석</h3>
+                <p>POS, 배달앱 데이터 통합 분석</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                </div>
+                <h3>수익 최적화</h3>
+                <p>플랫폼 수수료, 원가율 관리</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+                </div>
+                <h3>메뉴 전략</h3>
+                <p>베스트셀러 분석, 가격 전략</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3>성장 전략</h3>
+                <p>브랜드 확장, 프랜차이즈화</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 케이스 스터디 -->
+    <section class="case" id="case">
+        <div class="case-container">
+            <div class="case-label">Success Story</div>
+            <h2 class="case-title">현선이네 떡볶이 상도점</h2>
+            <p class="case-desc">배달 중심 매장의 수익성 개선 프로젝트. 6개 플랫폼 수수료 분석으로 최적의 채널 믹스를 도출하고 월 순이익 1,300만원 달성.</p>
+
+            <div class="case-stats">
+                <div class="stat">
+                    <div class="stat-value">8,211만</div>
+                    <div class="stat-label">월 매출</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">16.3%</div>
+                    <div class="stat-label">순이익률</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">101%</div>
+                    <div class="stat-label">목표달성</div>
+                </div>
+            </div>
+
+            <a href="store-sangdo.html" class="btn">상도점 분석 보기 →</a>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="contact">
+        <h2>함께 성장할 준비 되셨나요?</h2>
+        <p>무료 상담으로 매장의 가능성을 확인해보세요</p>
+        <a href="mailto:contact@dadarm.com" class="btn">상담 신청</a>
+    </section>
+
+    <footer>
+        © 2025 다다름 FNC. All rights reserved.
+    </footer>
+</body>
+</html>

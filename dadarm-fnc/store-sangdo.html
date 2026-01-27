@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>현선이네 상도점 - 경영 분석 | 다다름 FNC</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 네비게이션 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b35, #f7c59f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        .nav-links .current {
+            color: #ff6b35;
+        }
+
+        /* 애니메이션 배경 */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .gradient-sphere {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .sphere-1 {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            top: -200px;
+            right: -150px;
+        }
+
+        .sphere-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.02); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 24px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 헤더 */
+        .header {
+            margin-bottom: 48px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: #ff6b35; }
+
+        .header h1 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 12px;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #ff6b35, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ff6b35;
+        }
+
+        /* 탭 */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 6px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            color: white;
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* KPI 카드 */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+        }
+
+        .kpi-card:hover::before { opacity: 1; }
+
+        .kpi-card.success { --accent: #10b981; }
+        .kpi-card.warning { --accent: #f59e0b; }
+        .kpi-card.danger { --accent: #ef4444; }
+        .kpi-card.primary { --accent: #ff6b35; }
+        .kpi-card.info { --accent: #06b6d4; }
+
+        .kpi-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+
+        .kpi-value .small {
+            font-size: 16px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .kpi-change {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .kpi-percent {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255, 107, 53, 0.15);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-left: 6px;
+        }
+
+        /* 차트 박스 */
+        .chart-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: all 0.3s;
+        }
+
+        .chart-box:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 20px;
+            padding-left: 14px;
+            border-left: 3px solid #ff6b35;
+        }
+
+        /* 알림 */
+        .alert {
+            padding: 18px 20px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: start;
+            gap: 14px;
+            border: 1px solid;
+        }
+
+        .alert.danger {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .alert.warning {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .alert.success {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .alert-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+
+        .alert.danger .alert-icon svg { stroke: #ef4444; }
+        .alert.warning .alert-icon svg { stroke: #f59e0b; }
+        .alert.success .alert-icon svg { stroke: #10b981; }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        .alert-message {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        /* 추천 카드 */
+        .recommendation {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            border-left: 4px solid #ff6b35;
+        }
+
+        .recommendation:hover {
+            transform: translateX(4px);
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .recommendation.high { border-left-color: #ef4444; }
+        .recommendation.medium { border-left-color: #f59e0b; }
+
+        .rec-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .rec-priority {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .rec-priority.high {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+            color: #ff6b6b;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .rec-priority.medium {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .rec-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            flex: 1;
+        }
+
+        .rec-desc {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.7;
+            padding-left: 4px;
+        }
+
+        .rec-impact {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.08));
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #ff8c5a;
+            font-weight: 600;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            line-height: 1.5;
+        }
+
+        /* 테이블 */
+        .platform-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .platform-table th {
+            text-align: left;
+            padding: 14px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #666;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .platform-table td {
+            padding: 16px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: #999;
+            font-size: 14px;
+        }
+
+        .platform-table tr { transition: all 0.3s; }
+        .platform-table tr:hover { background: rgba(255, 107, 53, 0.03); }
+
+        .platform-name {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(255, 107, 53, 0.15);
+            color: #ff6b35;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .guide-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .guide-section h3 {
+            margin-bottom: 14px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .guide-section h3 .icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .guide-section h3 svg {
+            width: 18px;
+            height: 18px;
+            stroke: #ff6b35;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .guide-section ul {
+            margin-left: 16px;
+            color: #666;
+            line-height: 1.9;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #444;
+            margin-top: 60px;
+            padding: 30px 20px;
+            font-size: 13px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        /* 스케줄 간트차트 스타일 */
+        .schedule-chart {
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+
+        .schedule-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .schedule-name {
+            width: 100px;
+            flex-shrink: 0;
+            font-weight: 600;
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .schedule-timeline {
+            flex: 1;
+            height: 32px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+        }
+
+        .schedule-block {
+            position: absolute;
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        .schedule-block:hover {
+            transform: scaleY(1.1);
+            z-index: 10;
+        }
+
+        .schedule-block.lunch { background: linear-gradient(135deg, #10b981, #059669); }
+        .schedule-block.dinner { background: linear-gradient(135deg, #ff6b35, #ea580c); }
+        .schedule-block.full { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+        .schedule-header {
+            display: flex;
+            margin-bottom: 8px;
+            padding-left: 100px;
+        }
+
+        .schedule-hour {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .schedule-legend {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-color.lunch { background: linear-gradient(135deg, #10b981, #059669); }
+        .legend-color.dinner { background: linear-gradient(135deg, #ff6b35, #ea580c); }
+        .legend-color.full { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+        .optimization-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .optimization-card.positive { border-left: 3px solid #10b981; }
+        .optimization-card.negative { border-left: 3px solid #ef4444; }
+        .optimization-card.neutral { border-left: 3px solid #f59e0b; }
+
+        .opt-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .opt-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .container { padding: 80px 16px 40px; }
+            .header h1 { font-size: 28px; }
+            .tabs { overflow-x: scroll; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            nav { padding: 12px 20px; }
+            .schedule-name { width: 70px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">다다름 FNC</a>
+        <div class="nav-links">
+            <a href="index.html">메인</a>
+            <a href="executive.html">전체 매장 분석</a>
+            <a href="#" class="current">상도점 분석</a>
+        </div>
+    </nav>
+
+    <div class="bg-gradient">
+        <div class="gradient-sphere sphere-1"></div>
+        <div class="gradient-sphere sphere-2"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                다다름 홈으로
+            </a>
+            <h1>현선이네 <span>상도점</span></h1>
+            <p class="subtitle">AI 기반 요식업 전문 경영 분석</p>
+            <div class="badge">2025년 11월 데이터</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab(0)">대시보드</button>
+            <button class="tab-btn" onclick="showTab(1)">수익성 분석</button>
+            <button class="tab-btn" onclick="showTab(2)">배달 플랫폼</button>
+            <button class="tab-btn" onclick="showTab(3)">운영 효율</button>
+            <button class="tab-btn" onclick="showTab(4)">재고/발주</button>
+            <button class="tab-btn" onclick="showTab(5)">인건비</button>
+        </div>
+
+        <!-- 탭 1: 대시보드 -->
+        <div class="tab-content active" id="tab-0">
+            <div id="kpi-cards" class="kpi-grid"></div>
+            <div class="chart-box">
+                <div class="chart-title">일별 매출 추이</div>
+                <div id="daily-chart"></div>
+            </div>
+            <div id="alerts"></div>
+
+            <div class="chart-box" style="border-left: 3px solid #ff6b35; margin-top: 24px;">
+                <div class="chart-title" style="border-left: none; padding-left: 0;">11월 경영 진단 리포트</div>
+                <div class="guide-section" style="background: rgba(255,107,53,0.05); border-color: rgba(255,107,53,0.1);">
+                    <h3 style="color: #ff6b35;"><span class="icon" style="background: rgba(255,107,53,0.15);"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>핵심 성과 요약</h3>
+                    <ul style="color: #ccc;">
+                        <li><strong style="color:#10b981;">목표 매출 달성 101.1%</strong> - 8,211만원 달성 (목표 8,126만원)</li>
+                        <li><strong style="color:#10b981;">순이익 1,338만원</strong> - 순이익률 16.3%로 업계 상위권</li>
+                        <li><strong style="color:#f59e0b;">11/26(화) 휴무</strong> - 매출 0원 발생, 월 계획시 고려 필요</li>
+                        <li><strong style="color:#10b981;">최고 매출일 11/16(토)</strong> - 420만원, 주말 집중 전략 유효</li>
+                    </ul>
+                </div>
+                <div class="guide-section" style="background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.1);">
+                    <h3 style="color: #ef4444;"><span class="icon" style="background: rgba(239,68,68,0.15);"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>긴급 개선 필요</h3>
+                    <ul style="color: #ccc;">
+                        <li><strong style="color:#ef4444;">배달 수수료 2,340만원</strong> (매출의 28.5%) - 업계 평균 22% 대비 과다</li>
+                        <li><strong style="color:#ef4444;">쿠팡잇츠 의존도 58.4%</strong> - 플랫폼 정책 변경시 리스크 높음</li>
+                        <li><strong style="color:#f59e0b;">두잇 수수료율 44.2%</strong> - 타 플랫폼 대비 2배, 전환 검토 필요</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 탭 2: 수익성 분석 -->
+        <div class="tab-content" id="tab-1">
+            <div class="chart-box">
+                <div class="chart-title">수익 구조 분석 (Profit & Loss)</div>
+                <div id="profit-waterfall"></div>
+            </div>
+            <div class="grid-2">
+                <div class="chart-box">
+                    <div class="chart-title">비용 구성</div>
+                    <div id="cost-pie"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-title">수익성 지표</div>
+                    <div id="margin-chart"></div>
+                </div>
+            </div>
+            <div class="chart-box">
+                <div class="chart-title">배달 플랫폼별 수수료 부담</div>
+                <div id="fee-chart"></div>
+            </div>
+
+            <div class="chart-box" style="border-left: 3px solid #10b981;">
+                <div class="chart-title" style="border-left: none; padding-left: 0;">11월 수익성 진단</div>
+                <div class="recommendation high">
+                    <div class="rec-header">
+                        <span class="rec-priority high">핵심</span>
+                        <span class="rec-title">비용 구조 분석</span>
+                    </div>
+                    <div class="rec-desc">
+                        <strong>매출 8,211만 중 실제 손에 남는 돈: 1,338만원 (16.3%)</strong><br><br>
+                        • 원가(식자재): 2,194만원 (26.7%) ← <span style="color:#10b981;">업계 평균 30% 대비 양호</span><br>
+                        • 배달수수료: 2,340만원 (28.5%) ← <span style="color:#ef4444;">업계 평균 22% 대비 과다</span><br>
+                        • 인건비: 1,494만원 (18.2%) ← <span style="color:#10b981;">업계 평균 20% 대비 양호</span><br>
+                        • 기타(유틸/고정비): 352만원 (4.3%)
+                    </div>
+                    <div class="rec-impact">
+                        결론: 배달 수수료가 유일한 개선 포인트. 수수료율 5%p 절감시 <strong>월 순이익 +410만원 증가</strong>
+                    </div>
+                </div>
+
+                <div class="recommendation high" style="border-left-color:#10b981;">
+                    <div class="rec-header">
+                        <span class="rec-priority high" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">양호</span>
+                        <span class="rec-title">매출총이익률 73.3% - 업계 상위 10%</span>
+                    </div>
+                    <div class="rec-desc">
+                        식자재 원가율 26.7%로 떡볶이 업종 평균(30~35%) 대비 우수<br><br>
+                        • 핵심 원재료 단가 관리 양호 (쌀, 떡, 소스류)<br>
+                        • 야채류 가격 변동 리스크 있음 (시금치, 대파)<br>
+                        • 계절별 원가 변동 모니터링 필요
+                    </div>
+                    <div class="rec-impact">
+                        현재 원가율 유지시 <strong>연간 400만원 이상 추가 수익</strong> (동종 업계 대비)
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">영업이익률 24.9% - 목표 대비 양호</span>
+                    </div>
+                    <div class="rec-desc">
+                        영업이익 2,047만원 달성 (월 목표 2,000만원 달성)<br><br>
+                        • 매출총이익: 6,017만원 (73.3%)<br>
+                        • 인건비 차감: -1,494만원<br>
+                        • 배달수수료 차감: -2,340만원<br>
+                        • 유틸리티 차감: -136만원
+                    </div>
+                    <div class="rec-impact">
+                        배달수수료 개선시 영업이익률 <strong>30% 달성 가능</strong>
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">세금 부담 분석</span>
+                    </div>
+                    <div class="rec-desc">
+                        11월 예상 세금: VAT 328만 + 소득세 164만 = 총 492만원<br><br>
+                        • 세전이익: 1,831만원<br>
+                        • 유효세율: 약 27%<br>
+                        • 절세 방안: 적격증빙 확보, 감가상각 활용
+                    </div>
+                    <div class="rec-impact">
+                        적격증빙 100% 확보시 <strong>VAT 환급 가능</strong> - 연 200만원 절세 기대
+                    </div>
+                </div>
+
+                <div class="recommendation high">
+                    <div class="rec-header">
+                        <span class="rec-priority high">제안</span>
+                        <span class="rec-title">손익분기점(BEP) 분석</span>
+                    </div>
+                    <div class="rec-desc">
+                        현재 고정비: 월 약 4,000만원 (인건비+고정비+유틸리티)<br><br>
+                        • 손익분기 매출: 약 5,500만원/월<br>
+                        • 현재 매출: 8,211만원 (BEP 대비 +49%)<br>
+                        • 안전마진: 2,700만원
+                    </div>
+                    <div class="rec-impact">
+                        일매출 183만원 이상 유지시 흑자. 현재 <strong>일평균 274만원으로 안정권</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 탭 3: 배달 플랫폼 -->
+        <div class="tab-content" id="tab-2">
+            <div class="chart-box">
+                <div class="chart-title">플랫폼별 상세 비교</div>
+                <table class="platform-table" id="platform-table"></table>
+            </div>
+            <div class="grid-2">
+                <div class="chart-box">
+                    <div class="chart-title">플랫폼별 점유율</div>
+                    <div id="platform-pie"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-title">플랫폼별 순수익</div>
+                    <div id="platform-profit"></div>
+                </div>
+            </div>
+
+            <div class="chart-box" style="border-left: 3px solid #7c3aed;">
+                <div class="chart-title" style="border-left: none; padding-left: 0;">11월 플랫폼 전략 진단</div>
+                <div class="recommendation high">
+                    <div class="rec-header">
+                        <span class="rec-priority high">긴급</span>
+                        <span class="rec-title">쿠팡잇츠 의존도 분산 필요</span>
+                    </div>
+                    <div class="rec-desc">
+                        현재 배달 매출의 <strong>58.4%가 쿠팡잇츠</strong>에 집중<br>
+                        • 쿠팡잇츠: 3,889만 (수수료 35%, 실수익 2,529만)<br>
+                        • 배민+배민원: 1,433만 (수수료 27.5%, 실수익 1,039만)<br><br>
+                        <span style="color:#ef4444;">⚠️ 쿠팡잇츠 수수료율 인상 or 정책 변경시 큰 타격</span>
+                    </div>
+                    <div class="rec-impact">
+                        권장: 배민 비중을 30%까지 확대. 배민 수수료율이 7.5%p 낮아 <strong>동일 매출시 월 87만원 추가 수익</strong>
+                    </div>
+                </div>
+                <div class="recommendation high">
+                    <div class="rec-header">
+                        <span class="rec-priority high">긴급</span>
+                        <span class="rec-title">두잇 플랫폼 철수 검토</span>
+                    </div>
+                    <div class="rec-desc">
+                        두잇 수수료율 <strong>44.2%</strong>로 업계 최고 수준<br>
+                        • 매출 1,184만원 중 수수료로 523만원 지출<br>
+                        • 실수익 661만원 (수익률 55.8%)<br>
+                        • 동일 매출을 배민에서 발생시 수익률 72.5%
+                    </div>
+                    <div class="rec-impact">
+                        두잇 → 배민 전환시 <strong>월 198만원 추가 수익</strong> (연 2,376만원)
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">요기요 비중 확대 고려</span>
+                    </div>
+                    <div class="rec-desc">
+                        현재 요기요 매출 139만원 (점유율 2.1%)으로 미미<br><br>
+                        • 요기요 수수료율: 36.5% (쿠팡잇츠와 유사)<br>
+                        • 요기요 자체 프로모션 활용시 노출 증가 가능<br>
+                        • 요기요 전용 할인 이벤트로 신규 고객 유입 기대
+                    </div>
+                    <div class="rec-impact">
+                        요기요 점유율 10%까지 확대시 <strong>플랫폼 리스크 분산</strong> 효과
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">땡겨요 무수수료 전략 활용</span>
+                    </div>
+                    <div class="rec-desc">
+                        땡겨요 수수료율 <strong>0%</strong>로 순이익 100%<br><br>
+                        • 현재 매출: 38만원 (0.6% 점유율)<br>
+                        • 신한 땡겨요 결제시 은행 수수료만 발생<br>
+                        • 고객 인지도 낮아 적극적 홍보 필요
+                    </div>
+                    <div class="rec-impact">
+                        땡겨요 비중 5%까지 확대시 <strong>월 20만원 수수료 절감</strong>
+                    </div>
+                </div>
+
+                <div class="recommendation high">
+                    <div class="rec-header">
+                        <span class="rec-priority high">제안</span>
+                        <span class="rec-title">배달대행 직접 운영 검토</span>
+                    </div>
+                    <div class="rec-desc">
+                        배달대행 수수료율 <strong>66.4%</strong>로 최악의 효율<br><br>
+                        • 매출 15만원 중 수수료 10만원 (실수익 5만원)<br>
+                        • 자체 배달원 고용시 건당 3,000~4,000원 절감 가능<br>
+                        • 반경 1km 이내 홀 고객 대상 무료배달 프로모션 고려
+                    </div>
+                    <div class="rec-impact">
+                        자체 배달 전환시 배달대행 건당 <strong>수익률 2배 이상 개선</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 탭 4: 운영 효율 -->
+        <div class="tab-content" id="tab-3">
+            <div class="grid-2">
+                <div class="chart-box">
+                    <div class="chart-title">요일별 평균 매출</div>
+                    <div id="weekday-chart"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-title">홀 vs 배달 비교</div>
+                    <div id="channel-chart"></div>
+                </div>
+            </div>
+            <div class="chart-box">
+                <div class="chart-title">객단가 분석</div>
+                <div id="avg-price-chart"></div>
+            </div>
+
+            <div class="chart-box" style="border-left: 3px solid #06b6d4;">
+                <div class="chart-title" style="border-left: none; padding-left: 0;">11월 운영 효율 진단</div>
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">요일별 매출 패턴</span>
+                    </div>
+                    <div class="rec-desc">
+                        <strong>토요일이 압도적 1위</strong> (평균 356만원, 평일 대비 +97%)<br><br>
+                        • 토요일: 356만원 (1위) - 주말 외식 수요<br>
+                        • 일요일: 306만원 (2위)<br>
+                        • 금요일: 187만원 (3위)<br>
+                        • 평일 평균: 180만원<br><br>
+                        <span style="color:#f59e0b;">수요일이 최저 (175만원) - 프로모션 검토 가능</span>
+                    </div>
+                    <div class="rec-impact">
+                        주말 2일 매출이 전체의 <strong>40.2%</strong>. 주말 인력/재고 집중 배치 권장
+                    </div>
+                </div>
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">홀 매출 확대 기회</span>
+                    </div>
+                    <div class="rec-desc">
+                        현재 홀 18.9% vs 배달 81.1%<br>
+                        • 홀 객단가: 14,248원 (배달 대비 -1,023원 낮음)<br>
+                        • 홀 순이익률: 100% (수수료 없음)<br>
+                        • 배달 순이익률: 71.5% (수수료 28.5%)<br>
+                    </div>
+                    <div class="rec-impact">
+                        홀 비중 25%까지 확대시 <strong>월 수수료 절감 150만원</strong><br>
+                        방법: 홀 전용 세트 메뉴, 점심 할인, 단골 적립 프로그램
+                    </div>
+                </div>
+
+                <div class="recommendation high">
+                    <div class="rec-header">
+                        <span class="rec-priority high">제안</span>
+                        <span class="rec-title">수요일 프로모션 도입</span>
+                    </div>
+                    <div class="rec-desc">
+                        수요일 평균 매출 175만원으로 <strong>주중 최저</strong><br><br>
+                        • 토요일 대비 -51% (181만원 차이)<br>
+                        • "떡볶이 데이" 프로모션 고려<br>
+                        • 수요일 한정 세트 할인 or 사이드 증정
+                    </div>
+                    <div class="rec-impact">
+                        수요일 매출 20만원 증가시 <strong>월 80만원 추가 매출</strong> (4주 기준)
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">객단가 개선 여지</span>
+                    </div>
+                    <div class="rec-desc">
+                        홀 객단가 14,248원 < 배달 15,271원<br><br>
+                        • 홀 고객 추가 주문 유도 필요 (음료, 사이드 추천)<br>
+                        • 배달 고객은 배달비 때문에 묶음 주문 경향<br>
+                        • 홀 세트메뉴 가격 조정으로 객단가 상승 유도
+                    </div>
+                    <div class="rec-impact">
+                        홀 객단가 1,000원 상승시 <strong>월 110만원 추가 매출</strong>
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">피크타임 분석</span>
+                    </div>
+                    <div class="rec-desc">
+                        배달 주문 집중 시간대 분석 필요<br><br>
+                        • 점심 피크: 11:30~13:00 (예상 40%)<br>
+                        • 저녁 피크: 18:00~20:00 (예상 45%)<br>
+                        • 야간 주문: 20:00~22:00 (예상 15%)
+                    </div>
+                    <div class="rec-impact">
+                        피크타임 15분 전 사전 조리로 <strong>배달 시간 단축 → 평점 상승</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 탭 5: 재고/발주 -->
+        <div class="tab-content" id="tab-4">
+            <div class="kpi-grid">
+                <div class="kpi-card success">
+                    <div class="kpi-label">월 발주 비용</div>
+                    <div class="kpi-value">298<span class="small">만원</span></div>
+                    <div class="kpi-change">식자재 기준</div>
+                </div>
+                <div class="kpi-card primary">
+                    <div class="kpi-label">평균 발주 주기</div>
+                    <div class="kpi-value">7.5<span class="small">일</span></div>
+                </div>
+                <div class="kpi-card warning">
+                    <div class="kpi-label">긴급 발주 필요</div>
+                    <div class="kpi-value">2<span class="small">건</span></div>
+                    <div class="kpi-change">시금치, 대파</div>
+                </div>
+                <div class="kpi-card info">
+                    <div class="kpi-label">원가율</div>
+                    <div class="kpi-value">26.7<span class="small">%</span></div>
+                    <div class="kpi-change">업계 평균 대비 양호</div>
+                </div>
+            </div>
+
+            <div class="alert warning">
+                <div class="alert-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                <div>
+                    <div class="alert-title">시금치 발주 필요</div>
+                    <div class="alert-message">예상 소진일 1일 후 · 권장 발주일: 오늘</div>
+                </div>
+            </div>
+            <div class="alert success">
+                <div class="alert-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                <div>
+                    <div class="alert-title">쌀/계란 재고 충분</div>
+                    <div class="alert-message">다음 발주 예정일: 12/01 (쌀), 12/04 (계란)</div>
+                </div>
+            </div>
+
+            <div class="chart-box">
+                <div class="chart-title">품목별 발주 현황</div>
+                <table class="platform-table">
+                    <thead>
+                        <tr><th>품목</th><th>마지막 발주</th><th>발주 주기</th><th>다음 발주</th><th>1회 비용</th><th>상태</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="platform-name">쌀</span></td>
+                            <td>11/26</td>
+                            <td>7일</td>
+                            <td>12/03</td>
+                            <td>15.3만원</td>
+                            <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">양호</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-name">계란</span></td>
+                            <td>11/24</td>
+                            <td>10일</td>
+                            <td>12/04</td>
+                            <td>7.5만원</td>
+                            <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">양호</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-name">시금치</span></td>
+                            <td>11/24</td>
+                            <td>4일</td>
+                            <td style="color:#fbbf24;font-weight:700;">오늘</td>
+                            <td>4.7만원</td>
+                            <td><span class="badge" style="background:rgba(245,158,11,0.15);color:#fbbf24;">임박</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-name">양배추</span></td>
+                            <td>11/24</td>
+                            <td>10일</td>
+                            <td>12/04</td>
+                            <td>2.2만원</td>
+                            <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">양호</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-name">떡꼬치/피카츄</span></td>
+                            <td>11/26</td>
+                            <td>9일</td>
+                            <td>12/05</td>
+                            <td>20.1만원</td>
+                            <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">양호</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-name">대파</span></td>
+                            <td>11/20</td>
+                            <td>10일</td>
+                            <td style="color:#fbbf24;font-weight:700;">11/30</td>
+                            <td>1.6만원</td>
+                            <td><span class="badge" style="background:rgba(245,158,11,0.15);color:#fbbf24;">임박</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="grid-2">
+                <div class="chart-box">
+                    <div class="chart-title">품목별 월 지출</div>
+                    <div id="inventory-cost-chart"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-title">발주 주기 분석</div>
+                    <div id="order-cycle-chart"></div>
+                </div>
+            </div>
+
+            <div class="chart-box" style="border-left: 3px solid #f59e0b;">
+                <div class="chart-title" style="border-left: none; padding-left: 0;">11월 재고/발주 진단</div>
+
+                <div class="recommendation high" style="border-left-color:#10b981;">
+                    <div class="rec-header">
+                        <span class="rec-priority high" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">양호</span>
+                        <span class="rec-title">원가율 26.7% - 업계 우수 수준</span>
+                    </div>
+                    <div class="rec-desc">
+                        떡볶이 업종 평균 원가율 30~35% 대비 <strong>양호</strong><br><br>
+                        • 월 식자재 비용: 2,194만원<br>
+                        • 주요 원재료: 쌀(61만), 떡꼬치(40만), 김밥김/용기(45만)<br>
+                        • 야채류: 계란(22만), 시금치(12만), 양배추(7만)
+                    </div>
+                    <div class="rec-impact">
+                        현재 원가율 유지시 동종업계 대비 <strong>월 250만원 이상 추가 이익</strong>
+                    </div>
+                </div>
+
+                <div class="recommendation high">
+                    <div class="rec-header">
+                        <span class="rec-priority high">긴급</span>
+                        <span class="rec-title">신선식품 발주 주기 관리</span>
+                    </div>
+                    <div class="rec-desc">
+                        시금치, 대파 등 신선식품 발주 임박<br><br>
+                        • 시금치: 발주주기 4일 → <span style="color:#ef4444;">오늘 발주 필요</span><br>
+                        • 대파: 발주주기 10일 → <span style="color:#f59e0b;">11/30 발주 필요</span><br>
+                        • 양배추: 발주주기 10일 → 12/04까지 여유
+                    </div>
+                    <div class="rec-impact">
+                        재고 부족 방지로 <strong>주문 취소/불만 0건</strong> 유지
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">주말 전 발주 전략</span>
+                    </div>
+                    <div class="rec-desc">
+                        주말 매출이 평일 대비 +70% → 재고 소진 가속<br><br>
+                        • 일평균 매출 274만원 → 일평균 원가 73만원 소비<br>
+                        • 토/일 합계 매출 662만원 → 원가 177만원 소비<br>
+                        • 금요일 저녁까지 신선식품 재고 확인 필수
+                    </div>
+                    <div class="rec-impact">
+                        <strong>금요일 오전 발주</strong>로 주말 품절 리스크 제로화
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">대량 구매 비용 절감</span>
+                    </div>
+                    <div class="rec-desc">
+                        월 4회 발주 품목 대량구매 검토<br><br>
+                        • 쌀: 월 4회 x 15.3만 = 61만원 → 월 1회 대량 구매시 5% 할인 기대<br>
+                        • 떡꼬치: 월 3회 x 20만 = 60만원 → 대량구매 협상 가능<br>
+                        • 냉동보관 가능 품목 우선 적용
+                    </div>
+                    <div class="rec-impact">
+                        대량구매 전환시 <strong>월 5~8만원 절감</strong> (연 60~96만원)
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">김밥김/용기 비용 분석</span>
+                    </div>
+                    <div class="rec-desc">
+                        비식자재(포장재) 비용 월 45만원으로 높은 편<br><br>
+                        • 배달 비중 81% → 포장재 소비량 높음<br>
+                        • 친환경 포장재 사용시 비용 상승 예상<br>
+                        • 대량 구매 or 공급업체 변경 검토
+                    </div>
+                    <div class="rec-impact">
+                        포장재 공급처 변경으로 <strong>월 5만원 절감</strong> 가능
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 탭 6: 인건비 -->
+        <div class="tab-content" id="tab-5">
+            <div class="kpi-grid">
+                <div class="kpi-card primary">
+                    <div class="kpi-label">총 인건비</div>
+                    <div class="kpi-value">1,494<span class="small">만원</span></div>
+                </div>
+                <div class="kpi-card success">
+                    <div class="kpi-label">매출 대비</div>
+                    <div class="kpi-value">18.2<span class="small">%</span></div>
+                    <div class="kpi-change">업계 평균 20% 대비 양호</div>
+                </div>
+                <div class="kpi-card warning">
+                    <div class="kpi-label">정직원</div>
+                    <div class="kpi-value">387<span class="small">만원</span></div>
+                    <div class="kpi-change">점장 1명</div>
+                </div>
+                <div class="kpi-card info">
+                    <div class="kpi-label">파트타임</div>
+                    <div class="kpi-value">338<span class="small">만원</span></div>
+                    <div class="kpi-change">3명</div>
+                </div>
+            </div>
+
+            <div class="chart-box">
+                <div class="chart-title">직원 현황</div>
+                <table class="platform-table">
+                    <thead>
+                        <tr><th>이름</th><th>유형</th><th>급여/시급</th><th>주 근로시간</th><th>4대보험</th><th>총 비용</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="platform-name">점장</span></td>
+                            <td><span class="badge">정직원</span></td>
+                            <td>330만원</td>
+                            <td>52시간</td>
+                            <td>29.7만원</td>
+                            <td style="color:#ff6b35;font-weight:700;">387만원</td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-name">파트A</span></td>
+                            <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">파트</span></td>
+                            <td>14,000원/시</td>
+                            <td>25시간</td>
+                            <td>-</td>
+                            <td style="color:#ff6b35;font-weight:700;">140만원</td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-name">파트B</span></td>
+                            <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">파트</span></td>
+                            <td>14,300원/시</td>
+                            <td>20시간</td>
+                            <td>-</td>
+                            <td style="color:#ff6b35;font-weight:700;">114만원</td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-name">파트C</span></td>
+                            <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">파트</span></td>
+                            <td>14,000원/시</td>
+                            <td>15시간</td>
+                            <td>-</td>
+                            <td style="color:#ff6b35;font-weight:700;">84만원</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="grid-2">
+                <div class="chart-box">
+                    <div class="chart-title">인건비 구성</div>
+                    <div id="labor-pie-chart"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-title">요일별 인건비 vs 매출</div>
+                    <div id="labor-weekday-chart"></div>
+                </div>
+            </div>
+
+            <!-- 주간 스케줄 간트차트 -->
+            <div class="chart-box">
+                <div class="chart-title">11월 평균 주간 스케줄 (시간대별 근무 현황)</div>
+                <div class="schedule-chart">
+                    <div class="schedule-header">
+                        <div class="schedule-hour">10</div>
+                        <div class="schedule-hour">11</div>
+                        <div class="schedule-hour">12</div>
+                        <div class="schedule-hour">13</div>
+                        <div class="schedule-hour">14</div>
+                        <div class="schedule-hour">15</div>
+                        <div class="schedule-hour">16</div>
+                        <div class="schedule-hour">17</div>
+                        <div class="schedule-hour">18</div>
+                        <div class="schedule-hour">19</div>
+                        <div class="schedule-hour">20</div>
+                        <div class="schedule-hour">21</div>
+                        <div class="schedule-hour">22</div>
+                    </div>
+                    <div id="schedule-container"></div>
+                    <div class="schedule-legend">
+                        <div class="legend-item"><div class="legend-color lunch"></div>런치 (11-15시)</div>
+                        <div class="legend-item"><div class="legend-color dinner"></div>디너 (17-22시)</div>
+                        <div class="legend-item"><div class="legend-color full"></div>풀타임 (10-22시)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 인력 최적화 분석 -->
+            <div class="chart-box" style="border-left: 3px solid #06b6d4;">
+                <div class="chart-title" style="border-left: none; padding-left: 0;">11월 인건비 진단</div>
+
+                <div class="recommendation high" style="border-left-color:#10b981;">
+                    <div class="rec-header">
+                        <span class="rec-priority high" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">양호</span>
+                        <span class="rec-title">인건비 비율 업계 평균 이하</span>
+                    </div>
+                    <div class="rec-desc">
+                        현재 인건비 비율 <strong>18.2%</strong> (업계 평균 20~22%)<br><br>
+                        • 총 인건비: 1,494만원 / 매출 8,211만원<br>
+                        • 정직원(점장): 387만원 (4대보험 포함)<br>
+                        • 파트타임 3명: 338만원<br>
+                        • 기타(배달원 등): 769만원
+                    </div>
+                    <div class="rec-impact">
+                        현재 수준 유지 권장. <strong>업계 대비 월 150만원 절약 중</strong>
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">권장</span>
+                        <span class="rec-title">평일 저녁 인력 과잉 의심</span>
+                    </div>
+                    <div class="rec-desc">
+                        월~목 저녁 시간대 인건비 대비 매출 효율 낮음<br><br>
+                        • 평일 저녁 평균 매출: 120만원<br>
+                        • 평일 저녁 인건비: 약 28만원 (23.3%)<br>
+                        • 주말 저녁 인건비 대비 매출: 17.5%
+                    </div>
+                    <div class="rec-impact">
+                        평일 저녁 1명 감축 시 <strong>월 22만원 절감</strong> (주 4시간 x 4주)
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">주말 집중 배치 전략 유효</span>
+                    </div>
+                    <div class="rec-desc">
+                        주말(토/일) 매출이 전체의 40%를 차지하므로 인력 집중 배치 적절<br><br>
+                        • 토요일: 매출 356만원, 인건비 70만원 (19.7%)<br>
+                        • 일요일: 매출 306만원, 인건비 60만원 (19.6%)<br>
+                        • 평일 평균: 매출 180만원, 인건비 45만원 (25%)
+                    </div>
+                    <div class="rec-impact">
+                        주말 인력 배치는 현 수준 유지. 평일 대비 <strong>효율성 27% 높음</strong>
+                    </div>
+                </div>
+
+                <div class="recommendation medium">
+                    <div class="rec-header">
+                        <span class="rec-priority medium">인사이트</span>
+                        <span class="rec-title">점장 급여 대비 성과 분석</span>
+                    </div>
+                    <div class="rec-desc">
+                        점장 인건비 387만원 (4대보험 포함)은 매출 규모 대비 적정<br><br>
+                        • 점장 급여/매출 비율: 4.7%<br>
+                        • 업계 평균 점장 급여 비율: 5~6%<br>
+                        • 주 52시간 근무로 법정 상한 준수
+                    </div>
+                    <div class="rec-impact">
+                        현 수준 유지 권장. 단, <strong>52시간 상한으로 추가 근무 불가</strong> - 바쁜 시간대 파트 추가 검토
+                    </div>
+                </div>
+
+                <div class="recommendation high">
+                    <div class="rec-header">
+                        <span class="rec-priority high">제안</span>
+                        <span class="rec-title">런치/디너 브릿지 타임 효율화</span>
+                    </div>
+                    <div class="rec-desc">
+                        15-17시 브릿지 타임 인력 배치 재검토 필요<br><br>
+                        • 해당 시간대 시간당 매출: 약 8만원<br>
+                        • 투입 인건비: 약 2.8만원 (35%)<br>
+                        • 런치 마감 후 → 디너 준비 전환 시간
+                    </div>
+                    <div class="rec-impact">
+                        해당 시간대 1인 감축 시 <strong>월 11만원 절감</strong>. 단, 디너 프렙 시간 확보 필요
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Powered by <a href="index.html">다다름 FNC</a></p>
+        </div>
+    </div>
+
+<script>
+const data = {
+    dates: ["11/01", "11/02", "11/03", "11/04", "11/05", "11/06", "11/07", "11/08", "11/09", "11/10", "11/11", "11/12", "11/13", "11/14", "11/15", "11/16", "11/17", "11/18", "11/19", "11/20", "11/21", "11/22", "11/23", "11/24", "11/25", "11/26", "11/27", "11/28", "11/29", "11/30"],
+    sales: [3451150, 3584670, 2328890, 2521160, 2336160, 2667290, 2656600, 3507770, 3947350, 2423410, 2384990, 2318460, 2395070, 2550930, 3709360, 4209500, 2447430, 2469110, 2367890, 2273480, 2273480, 3578690, 3578690, 1836040, 2509910, 0, 2781550, 2112820, 3130560, 3502630],
+    target: [3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000, 2400000, 2200000, 2200000, 2200000, 2300000, 3500000, 3700000],
+    total: 82117570,
+    cost: 21940047,
+    grossProfit: 60177523,
+    grossMargin: 73.3,
+    deliveryFee: 23397702,
+    laborCost: 14947167,
+    utilities: 1364138,
+    operatingProfit: 20468516,
+    operatingMargin: 24.9,
+    fixedCost: 2155074,
+    ebt: 18313442,
+    vat: 3284703,
+    incomeTax: 1642351,
+    netProfit: 13386388,
+    netMargin: 16.3,
+    hall: 15488600,
+    delivery: 66628970,
+    platforms: [
+        {name: '쿠팡잇츠', sales: 38899057, feeRate: 35.0, fee: 13606820, netSales: 25292237},
+        {name: '배민+배민원', sales: 14335455, feeRate: 27.5, fee: 3948398, netSales: 10387057},
+        {name: '두잇', sales: 11847650, feeRate: 44.2, fee: 5232333, netSales: 6615317},
+        {name: '요기요', sales: 1396308, feeRate: 36.5, fee: 510151, netSales: 886157},
+        {name: '배달대행', sales: 150500, feeRate: 66.4, fee: 100000, netSales: 50500},
+        {name: '땡겨요', sales: 380229, feeRate: 0, fee: 0, netSales: 380229}
+    ],
+    weekdayAvg: [1807154, 1843815, 1755627, 1833960, 1870252, 3561742, 3064042]
+};
+
+const fmt = (n) => Math.round(n).toLocaleString('ko-KR');
+const fmtK = (n) => Math.floor(n/10000);
+
+function showTab(idx) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-content').forEach((content, i) => content.classList.toggle('active', i === idx));
+}
+
+// KPI 카드
+const kpis = [
+    {label: '총 매출', value: fmtK(data.total), unit: '만원', change: '목표 달성 101.1%', cls: 'primary'},
+    {label: '매출총이익', value: fmtK(data.grossProfit), unit: '만원', pct: data.grossMargin.toFixed(1) + '%', cls: 'success'},
+    {label: '영업이익', value: fmtK(data.operatingProfit), unit: '만원', pct: data.operatingMargin.toFixed(1) + '%', cls: 'info'},
+    {label: '순이익', value: fmtK(data.netProfit), unit: '만원', pct: data.netMargin.toFixed(1) + '%', cls: 'success'},
+    {label: '배달 비중', value: '81.1', unit: '%', change: '홀: 18.9%', cls: 'warning'},
+    {label: '배달 수수료', value: fmtK(data.deliveryFee), unit: '만원', change: '매출의 28.5%', cls: 'danger'}
+];
+
+document.getElementById('kpi-cards').innerHTML = kpis.map(k => `
+    <div class="kpi-card ${k.cls}">
+        <div class="kpi-label">${k.label}</div>
+        <div class="kpi-value">${k.value}<span class="small">${k.unit}</span>${k.pct ? '<span class="kpi-percent">' + k.pct + '</span>' : ''}</div>
+        <div class="kpi-change">${k.change || ''}</div>
+    </div>
+`).join('');
+
+// 차트 공통 레이아웃
+const chartLayout = {
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: {color: '#888', family: 'Inter'},
+    xaxis: {gridcolor: 'rgba(255,255,255,0.03)', showgrid: true},
+    yaxis: {gridcolor: 'rgba(255,255,255,0.03)', showgrid: true, tickformat: ',d'},
+    margin: {t: 20, b: 50, l: 70, r: 20}
+};
+
+// 일별 매출
+Plotly.newPlot('daily-chart', [
+    {x: data.dates, y: data.sales, type: 'scatter', mode: 'lines+markers', name: '실제', line: {color: '#ff6b35', width: 3}, marker: {size: 5}, fill: 'tozeroy', fillcolor: 'rgba(255, 107, 53, 0.1)'},
+    {x: data.dates, y: data.target, type: 'scatter', mode: 'lines', name: '목표', line: {color: '#666', width: 2, dash: 'dash'}}
+], {...chartLayout, showlegend: true, legend: {orientation: 'h', y: 1.1, font: {color: '#888'}}}, {responsive: true});
+
+// 경고
+const alerts = [
+    {level: 'danger', title: '배달 수수료 과다', msg: '배달 수수료 2,340만원(매출의 28.5%) → 수수료율 관리 필요'},
+    {level: 'danger', title: '쿠팡잇츠 의존도 과다', msg: '배달 매출의 58.4%가 쿠팡잇츠 집중 → 플랫폼 리스크 높음'},
+    {level: 'warning', title: '배달 의존도 높음', msg: '배달 81.1% vs 홀 18.9% → 수수료 부담 큼'},
+    {level: 'success', title: '원가율 우수', msg: '원가율 26.7% → 업계 평균 대비 양호'}
+];
+
+const alertIcons = {
+    danger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+};
+
+document.getElementById('alerts').innerHTML = alerts.map(a => `
+    <div class="alert ${a.level}">
+        <div class="alert-icon">${alertIcons[a.level]}</div>
+        <div>
+            <div class="alert-title">${a.title}</div>
+            <div class="alert-message">${a.msg}</div>
+        </div>
+    </div>
+`).join('');
+
+// 수익 워터폴
+Plotly.newPlot('profit-waterfall', [{
+    type: 'waterfall',
+    x: ['매출', '원가', '매출총이익', '인건비', '배달수수료', '유틸리티', '영업이익', '고정비', '세전이익', 'VAT+세금', '순이익'],
+    y: [data.total, -data.cost, 0, -data.laborCost, -data.deliveryFee, -data.utilities, 0, -data.fixedCost, 0, -(data.vat + data.incomeTax), 0],
+    measure: ['relative', 'relative', 'total', 'relative', 'relative', 'relative', 'total', 'relative', 'total', 'relative', 'total'],
+    connector: {line: {color: 'rgba(255,255,255,0.1)'}},
+    decreasing: {marker: {color: '#ef4444'}},
+    increasing: {marker: {color: '#10b981'}},
+    totals: {marker: {color: '#ff6b35'}}
+}], chartLayout, {responsive: true});
+
+// 비용 파이
+Plotly.newPlot('cost-pie', [{
+    values: [data.cost, data.deliveryFee, data.laborCost, data.utilities + data.fixedCost],
+    labels: ['원가 (26.7%)', '배달수수료 (28.5%)', '인건비 (18.2%)', '기타비용 (4.3%)'],
+    type: 'pie',
+    hole: 0.5,
+    marker: {colors: ['#ff6b35', '#ef4444', '#f59e0b', '#7c3aed']},
+    textfont: {color: '#fff', size: 12}
+}], chartLayout, {responsive: true});
+
+// 수익성 지표
+Plotly.newPlot('margin-chart', [{
+    x: ['매출총이익률', '영업이익률', '순이익률'],
+    y: [data.grossMargin, data.operatingMargin, data.netMargin],
+    type: 'bar',
+    marker: {color: ['#10b981', '#ff6b35', '#7c3aed']},
+    text: [data.grossMargin.toFixed(1) + '%', data.operatingMargin.toFixed(1) + '%', data.netMargin.toFixed(1) + '%'],
+    textposition: 'outside',
+    textfont: {color: '#fff', size: 14}
+}], {...chartLayout, yaxis: {...chartLayout.yaxis, ticksuffix: '%', range: [0, 80]}}, {responsive: true});
+
+// 수수료 차트
+Plotly.newPlot('fee-chart', [
+    {x: data.platforms.map(p => p.name), y: data.platforms.map(p => p.sales), name: '매출', type: 'bar', marker: {color: '#ff6b35'}},
+    {x: data.platforms.map(p => p.name), y: data.platforms.map(p => p.fee), name: '수수료', type: 'bar', marker: {color: '#ef4444'}}
+], {...chartLayout, barmode: 'group', legend: {orientation: 'h', y: 1.1, font: {color: '#888'}}}, {responsive: true});
+
+// 플랫폼 테이블
+const totalPlatformSales = data.platforms.reduce((sum, p) => sum + p.sales, 0);
+document.getElementById('platform-table').innerHTML = `
+    <thead>
+        <tr><th>플랫폼</th><th>매출</th><th>수수료율</th><th>수수료</th><th>실수익</th><th>점유율</th></tr>
+    </thead>
+    <tbody>
+        ${data.platforms.map(p => `
+            <tr>
+                <td><span class="platform-name">${p.name}</span></td>
+                <td>${fmt(p.sales)}원</td>
+                <td><span class="badge">${p.feeRate}%</span></td>
+                <td style="color: #fca5a5;">${fmt(p.fee)}원</td>
+                <td style="color: #86efac; font-weight: 700;">${fmt(p.netSales)}원</td>
+                <td>${(p.sales / totalPlatformSales * 100).toFixed(1)}%</td>
+            </tr>
+        `).join('')}
+    </tbody>
+`;
+
+// 플랫폼 파이
+Plotly.newPlot('platform-pie', [{
+    values: data.platforms.map(p => p.sales),
+    labels: data.platforms.map(p => p.name),
+    type: 'pie',
+    hole: 0.5,
+    marker: {colors: ['#ff6b35', '#7c3aed', '#ec4899', '#f59e0b', '#10b981', '#06b6d4']},
+    textfont: {color: '#fff'}
+}], {...chartLayout, showlegend: true, legend: {font: {color: '#888'}}}, {responsive: true});
+
+// 플랫폼 순수익
+Plotly.newPlot('platform-profit', [{
+    x: data.platforms.map(p => p.netSales),
+    y: data.platforms.map(p => p.name),
+    type: 'bar',
+    orientation: 'h',
+    marker: {color: '#ff6b35'}
+}], chartLayout, {responsive: true});
+
+// 요일별
+Plotly.newPlot('weekday-chart', [{
+    x: ['월', '화', '수', '목', '금', '토', '일'],
+    y: data.weekdayAvg,
+    type: 'bar',
+    marker: {color: data.weekdayAvg.map((v, i) => i >= 5 ? '#ff6b35' : '#555')}
+}], chartLayout, {responsive: true});
+
+// 홀 vs 배달
+Plotly.newPlot('channel-chart', [{
+    values: [data.hall, data.delivery],
+    labels: ['홀 매출', '배달 매출'],
+    type: 'pie',
+    hole: 0.6,
+    marker: {colors: ['#10b981', '#ff6b35']},
+    textfont: {color: '#fff', size: 13}
+}], chartLayout, {responsive: true});
+
+// 객단가
+Plotly.newPlot('avg-price-chart', [{
+    x: ['홀 객단가', '배달 객단가'],
+    y: [14248, 15271],
+    type: 'bar',
+    marker: {color: ['#10b981', '#ff6b35']},
+    text: ['14,248원', '15,271원'],
+    textposition: 'outside',
+    textfont: {color: '#fff', size: 14}
+}], chartLayout, {responsive: true});
+
+// 재고/발주 탭 차트
+Plotly.newPlot('inventory-cost-chart', [{
+    x: ['쌀', '계란', '떡꼬치', '김밥김/용기', '시금치', '양배추', '대파'],
+    y: [61, 22.4, 40.2, 44.9, 11.5, 6.5, 1.6],
+    type: 'bar',
+    marker: { color: ['#ff6b35', '#ff6b35', '#ff6b35', '#f59e0b', '#10b981', '#10b981', '#10b981'] },
+    text: ['61만', '22.4만', '40.2만', '44.9만', '11.5만', '6.5만', '1.6만'],
+    textposition: 'outside'
+}], {...chartLayout, yaxis: {...chartLayout.yaxis, title: '만원'}}, {responsive: true});
+
+Plotly.newPlot('order-cycle-chart', [{
+    y: ['시금치', '쌀', '떡꼬치/피카츄', '계란', '양배추', '대파'],
+    x: [4, 7, 9, 10, 10, 10],
+    type: 'bar',
+    orientation: 'h',
+    marker: { color: ['#ef4444', '#f59e0b', '#ff6b35', '#10b981', '#10b981', '#10b981'] },
+    text: ['4일 (신선)', '7일', '9일', '10일', '10일', '10일'],
+    textposition: 'outside'
+}], chartLayout, {responsive: true});
+
+// 인건비 탭 차트
+Plotly.newPlot('labor-pie-chart', [{
+    values: [387, 140, 114, 84],
+    labels: ['점장(정직원)', '파트A', '파트B', '파트C'],
+    type: 'pie',
+    hole: 0.5,
+    marker: { colors: ['#ff6b35', '#10b981', '#06b6d4', '#8b5cf6'] },
+    textfont: { color: '#fff', size: 12 }
+}], chartLayout, {responsive: true});
+
+Plotly.newPlot('labor-weekday-chart', [
+    { x: ['월', '화', '수', '목', '금', '토', '일'], y: [180, 184, 175, 183, 187, 356, 306], name: '매출(만)', type: 'bar', marker: { color: '#ff6b35' } },
+    { x: ['월', '화', '수', '목', '금', '토', '일'], y: [45, 45, 45, 45, 50, 70, 60], name: '인건비(만)', type: 'bar', marker: { color: '#10b981' } }
+], {...chartLayout, barmode: 'group', legend: {orientation: 'h', y: 1.1}}, {responsive: true});
+
+// 스케줄 간트차트 생성
+const scheduleData = [
+    { name: '점장', shifts: [{start: 10, end: 22, type: 'full'}] },
+    { name: '파트A', shifts: [{start: 11, end: 15, type: 'lunch'}, {start: 18, end: 22, type: 'dinner'}] },
+    { name: '파트B', shifts: [{start: 17, end: 22, type: 'dinner'}] },
+    { name: '파트C', shifts: [{start: 11, end: 14, type: 'lunch'}] }
+];
+
+const scheduleContainer = document.getElementById('schedule-container');
+const totalHours = 13; // 10시~22시
+
+scheduleData.forEach(employee => {
+    const row = document.createElement('div');
+    row.className = 'schedule-row';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'schedule-name';
+    nameDiv.textContent = employee.name;
+    row.appendChild(nameDiv);
+
+    const timeline = document.createElement('div');
+    timeline.className = 'schedule-timeline';
+
+    employee.shifts.forEach(shift => {
+        const block = document.createElement('div');
+        block.className = `schedule-block ${shift.type}`;
+        const startPercent = ((shift.start - 10) / totalHours) * 100;
+        const widthPercent = ((shift.end - shift.start) / totalHours) * 100;
+        block.style.left = startPercent + '%';
+        block.style.width = widthPercent + '%';
+        block.textContent = `${shift.start}:00-${shift.end}:00`;
+        timeline.appendChild(block);
+    });
+
+    row.appendChild(timeline);
+    scheduleContainer.appendChild(row);
+});
+</script>
+</body>
+</html>

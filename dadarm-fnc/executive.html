@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다다름 FNC - 경영진 대시보드</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* 헤더 */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .header .logo {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ff6b35;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff 0%, #ff6b35 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .header .period {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ff6b35;
+        }
+
+        /* 총괄 KPI */
+        .total-kpi {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .total-kpi-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .total-kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent, #ff6b35);
+        }
+
+        .total-kpi-card .label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .total-kpi-card .value {
+            font-size: 48px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .total-kpi-card .value span {
+            font-size: 20px;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .total-kpi-card .change {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .total-kpi-card .change.negative { color: #ef4444; }
+
+        /* 섹션 */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #ff6b35;
+            border-radius: 2px;
+        }
+
+        /* 매장 그리드 */
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .store-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .store-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 107, 53, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .store-card .store-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .store-card .store-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .store-card .store-type {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .store-type.flagship { background: rgba(255, 107, 53, 0.2); color: #ff6b35; }
+        .store-type.large { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        .store-type.medium { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .store-type.small { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+        .store-card .store-sales {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .store-card .store-sales span {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .store-card .store-profit {
+            font-size: 14px;
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .store-card .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .store-card .metric {
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .store-card .metric-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .store-card .metric-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 4px;
+        }
+
+        .store-card .ratio-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .store-card .ratio-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b35, #10b981);
+            border-radius: 3px;
+        }
+
+        .store-card .ratio-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 10px;
+            color: #666;
+        }
+
+        /* 차트 박스 */
+        .chart-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        /* 인사이트 박스 */
+        .insights-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 107, 53, 0.02) 100%);
+            border: 1px solid rgba(255, 107, 53, 0.15);
+            border-radius: 20px;
+            padding: 28px;
+            margin-top: 48px;
+        }
+
+        .insights-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: #ff6b35;
+        }
+
+        .insight-item {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+
+        .insight-item:last-child { margin-bottom: 0; }
+
+        .insight-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .insight-icon.urgent { background: rgba(239, 68, 68, 0.2); }
+        .insight-icon.opportunity { background: rgba(16, 185, 129, 0.2); }
+        .insight-icon.warning { background: rgba(245, 158, 11, 0.2); }
+
+        .insight-content h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .insight-content p {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        .insight-content .impact {
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #ff8c5a;
+            font-weight: 600;
+        }
+
+        /* 푸터 */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #444;
+            font-size: 13px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 60px;
+        }
+
+        .footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        /* 메인 탭 */
+        .main-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            padding: 6px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-tab {
+            padding: 14px 32px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .main-tab:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .main-tab.active {
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.3);
+        }
+
+        .main-tab-content {
+            display: none;
+        }
+
+        .main-tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 드러커 스타일 */
+        .drucker-intro {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.02) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 24px;
+            margin-bottom: 48px;
+        }
+
+        .drucker-quote {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+            font-style: italic;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto 16px;
+        }
+
+        .drucker-author {
+            font-size: 16px;
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        .drucker-questions {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .dq-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .dq-number {
+            font-size: 14px;
+            font-weight: 800;
+            color: #8b5cf6;
+            margin-bottom: 12px;
+        }
+
+        .dq-question {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            min-height: 40px;
+        }
+
+        .dq-answer {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        /* 버려야 할 것 */
+        .abandon-card {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .abandon-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .abandon-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .abandon-reason {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .abandon-action {
+            font-size: 13px;
+            color: #fca5a5;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .abandon-impact {
+            font-size: 14px;
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        /* 집중해야 할 것 */
+        .focus-insight {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-top: 24px;
+            padding: 24px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+        }
+
+        .focus-stat {
+            text-align: center;
+        }
+
+        .focus-value {
+            font-size: 48px;
+            font-weight: 900;
+            color: #10b981;
+        }
+
+        .focus-label {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .focus-recommendation {
+            flex: 1;
+            font-size: 15px;
+            color: #aaa;
+            line-height: 1.7;
+        }
+
+        /* 생산성 */
+        .productivity-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .prod-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .prod-card .store-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .prod-card .prod-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .prod-card .prod-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .prod-card .prod-rank {
+            margin-top: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .prod-rank.top { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .prod-rank.mid { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .prod-rank.low { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+        /* 고객 비교 */
+        .customer-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .cc-item {
+            flex: 1;
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .cc-item.highlight {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .cc-channel {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .cc-stats {
+            font-size: 13px;
+            color: #888;
+            line-height: 2;
+        }
+
+        .cc-vs {
+            font-size: 18px;
+            font-weight: 800;
+            color: #444;
+        }
+
+        .cc-insight {
+            text-align: center;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 10px;
+            font-size: 14px;
+            color: #10b981;
+            margin-top: 16px;
+        }
+
+        /* 성장 카드 */
+        .growth-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .growth-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .growth-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .growth-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .growth-value.positive { color: #10b981; }
+        .growth-value.negative { color: #ef4444; }
+
+        .growth-note {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 드러커 최종 권고 */
+        .drucker-final {
+            margin-top: 48px;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.02) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 24px;
+        }
+
+        .drucker-final-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #8b5cf6;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .drucker-final-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .df-item {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .df-item.stop {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .df-item.start {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .df-item.continue {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .df-header {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .df-item.stop .df-header { color: #ef4444; }
+        .df-item.start .df-header { color: #10b981; }
+        .df-item.continue .df-header { color: #f59e0b; }
+
+        .df-item ul {
+            list-style: none;
+            font-size: 14px;
+            color: #aaa;
+            line-height: 2;
+        }
+
+        .df-item ul li::before {
+            content: '•';
+            margin-right: 8px;
+            color: inherit;
+        }
+
+        /* 액션 테이블 */
+        .action-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .action-table th {
+            text-align: left;
+            padding: 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #666;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 14px;
+            color: #aaa;
+            vertical-align: top;
+        }
+
+        .action-table tr:hover {
+            background: rgba(255, 107, 53, 0.03);
+        }
+
+        .action-table .store-name {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .action-table .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status.good { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .status.warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .status.danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+        .action-table .action {
+            color: #ff6b35;
+            font-weight: 600;
+        }
+
+        .action-table .effect {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        /* 의사결정 카드 */
+        .decision-item {
+            padding: 16px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .decision-item:last-child { margin-bottom: 0; }
+
+        .decision-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .decision-item p {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .decision-item .roi {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 6px;
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        .decision-item .cost {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(239, 68, 68, 0.15);
+            border-radius: 6px;
+            font-size: 12px;
+            color: #fca5a5;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        /* 시나리오 카드 */
+        .scenario-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .scenario {
+            padding: 24px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .scenario h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .scenario .condition {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .scenario .result {
+            padding: 16px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 10px;
+        }
+
+        .scenario .result-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .scenario .result-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ff6b35;
+            margin-top: 4px;
+        }
+
+        .scenario .result-value span {
+            font-size: 14px;
+            color: #888;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .store-grid { grid-template-columns: repeat(2, 1fr); }
+            .total-kpi { grid-template-columns: repeat(2, 1fr); }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .scenario-card { grid-template-columns: 1fr; }
+            .drucker-questions { grid-template-columns: repeat(3, 1fr); }
+            .productivity-grid { grid-template-columns: repeat(2, 1fr); }
+            .growth-cards { grid-template-columns: repeat(2, 1fr); }
+            .drucker-final-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .store-grid { grid-template-columns: 1fr; }
+            .total-kpi { grid-template-columns: 1fr 1fr; }
+            .header h1 { font-size: 32px; }
+            .total-kpi-card .value { font-size: 36px; }
+            .main-tabs { flex-direction: column; width: 100%; }
+            .main-tab { width: 100%; }
+            .drucker-questions { grid-template-columns: 1fr; }
+            .drucker-quote { font-size: 18px; }
+            .productivity-grid { grid-template-columns: 1fr; }
+            .growth-cards { grid-template-columns: 1fr 1fr; }
+            .focus-insight { flex-direction: column; text-align: center; }
+        }
+        /* 네비게이션 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        nav .logo {
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b35, #f7c59f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        .nav-links .current {
+            color: #ff6b35;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">다다름 FNC</a>
+        <div class="nav-links">
+            <a href="index.html">메인</a>
+            <a href="#" class="current">전체 매장 분석</a>
+            <a href="store-sangdo.html">상도점 분석</a>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 80px;">
+        <div class="header">
+            <div class="logo" style="-webkit-text-fill-color: #ff6b35;">다다름 FNC</div>
+            <h1>현선이네 떡볶이</h1>
+            <p class="subtitle">8개 매장 통합 경영 분석 리포트</p>
+            <div class="period">2025년 1월 ~ 12월 (12개월 시뮬레이션)</div>
+        </div>
+
+        <!-- 탭 네비게이션 -->
+        <div class="main-tabs">
+            <button class="main-tab active" onclick="showMainTab(0)">경영진 대시보드</button>
+            <button class="main-tab" onclick="showMainTab(1)">피터 드러커 ver.</button>
+        </div>
+
+        <!-- 탭 1: 경영진 대시보드 -->
+        <div class="main-tab-content active" id="exec-tab">
+
+        <!-- 총괄 KPI -->
+        <div class="total-kpi" id="total-kpi"></div>
+
+        <!-- 월별 매출 추이 -->
+        <div class="section">
+            <div class="section-title">월별 매출 추이</div>
+            <div class="grid-2">
+                <div class="chart-box">
+                    <div class="chart-title">전체 매장 월별 매출</div>
+                    <div id="monthly-chart" style="height: 350px;"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-title">분기별 매출 비중</div>
+                    <div id="season-chart" style="height: 350px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 매장별 현황 -->
+        <div class="section">
+            <div class="section-title">매장별 현황</div>
+            <div class="store-grid" id="store-grid"></div>
+        </div>
+
+        <!-- 매장별 비교 -->
+        <div class="section">
+            <div class="section-title">매장별 비교</div>
+            <div class="chart-box" style="margin-bottom: 24px;">
+                <div class="chart-title">매장별 연매출 순위</div>
+                <div id="store-ranking" style="height: 400px;"></div>
+            </div>
+            <div class="chart-box" style="margin-bottom: 24px;">
+                <div class="chart-title">매장별 순이익률</div>
+                <div id="profit-comparison" style="height: 400px;"></div>
+            </div>
+            <div class="grid-2" style="grid-template-columns: 1fr 1fr;">
+                <div class="chart-box">
+                    <div class="chart-title">매출 비중 (배달 vs 홀)</div>
+                    <div id="channel-distribution" style="height: 400px;"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-title">순이익 기여도 (수수료 반영)</div>
+                    <div id="profit-contribution" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 의사결정 대시보드 -->
+        <div class="section">
+            <div class="section-title">의사결정 도구</div>
+            <div class="grid-3">
+                <div class="chart-box" style="border-top: 3px solid #ef4444;">
+                    <div class="chart-title" style="color: #ef4444;">즉시 조치 필요</div>
+                    <div id="urgent-actions"></div>
+                </div>
+                <div class="chart-box" style="border-top: 3px solid #10b981;">
+                    <div class="chart-title" style="color: #10b981;">투자 검토</div>
+                    <div id="investment-options"></div>
+                </div>
+                <div class="chart-box" style="border-top: 3px solid #f59e0b;">
+                    <div class="chart-title" style="color: #f59e0b;">비용 절감 기회</div>
+                    <div id="cost-savings"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 매장별 액션 플랜 -->
+        <div class="section">
+            <div class="section-title">매장별 액션 플랜</div>
+            <div class="chart-box">
+                <table class="action-table" id="action-table">
+                    <thead>
+                        <tr>
+                            <th>매장</th>
+                            <th>현재 상태</th>
+                            <th>핵심 이슈</th>
+                            <th>권장 액션</th>
+                            <th>예상 효과</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 시나리오 시뮬레이션 -->
+        <div class="insights-box">
+            <div class="insights-title">What-If 시나리오 분석</div>
+            <div id="scenarios"></div>
+        </div>
+
+        </div><!-- 경영진 탭 끝 -->
+
+        <!-- 탭 2: 피터 드러커 ver -->
+        <div class="main-tab-content" id="drucker-tab">
+
+            <!-- 드러커 철학 인트로 -->
+            <div class="drucker-intro">
+                <div class="drucker-quote">
+                    "측정할 수 없으면 관리할 수 없다. 하지만 잘못된 것을 측정하면 잘못된 것을 관리하게 된다."
+                </div>
+                <div class="drucker-author">— Peter Drucker</div>
+            </div>
+
+            <!-- 드러커 핵심 질문 -->
+            <div class="section">
+                <div class="section-title">드러커의 5가지 핵심 질문</div>
+                <div class="drucker-questions">
+                    <div class="dq-card">
+                        <div class="dq-number">Q1</div>
+                        <div class="dq-question">우리의 사명은 무엇인가?</div>
+                        <div class="dq-answer">"합리적 가격에 맛있는 분식으로 일상의 행복을 전달"</div>
+                    </div>
+                    <div class="dq-card">
+                        <div class="dq-number">Q2</div>
+                        <div class="dq-question">우리의 고객은 누구인가?</div>
+                        <div class="dq-answer" id="customer-answer">분석 중...</div>
+                    </div>
+                    <div class="dq-card">
+                        <div class="dq-number">Q3</div>
+                        <div class="dq-question">고객이 가치있게 여기는 것은?</div>
+                        <div class="dq-answer" id="value-answer">분석 중...</div>
+                    </div>
+                    <div class="dq-card">
+                        <div class="dq-number">Q4</div>
+                        <div class="dq-question">우리의 성과는 무엇인가?</div>
+                        <div class="dq-answer" id="result-answer">분석 중...</div>
+                    </div>
+                    <div class="dq-card">
+                        <div class="dq-number">Q5</div>
+                        <div class="dq-question">우리의 계획은 무엇인가?</div>
+                        <div class="dq-answer" id="plan-answer">분석 중...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 버려야 할 것 (Abandonment) -->
+            <div class="section">
+                <div class="section-title" style="color: #ef4444;">버려야 할 것 (Abandonment)</div>
+                <p style="color: #888; margin-bottom: 24px; font-size: 14px;">"체계적 폐기 없이는 혁신도 없다" — 지금 당장 중단하거나 축소해야 할 것</p>
+                <div class="grid-3">
+                    <div class="abandon-card">
+                        <div class="abandon-icon">🚫</div>
+                        <div class="abandon-title">두잇 플랫폼</div>
+                        <div class="abandon-reason">수수료 44.2% → 매출의 절반이 수수료</div>
+                        <div class="abandon-action">즉시 철수 권장</div>
+                        <div class="abandon-impact">연 +9,600만원</div>
+                    </div>
+                    <div class="abandon-card">
+                        <div class="abandon-icon">⚠️</div>
+                        <div class="abandon-title" id="worst-store">성수점</div>
+                        <div class="abandon-reason" id="worst-store-reason">ROI 최하위, 순이익률 13%</div>
+                        <div class="abandon-action">리뉴얼 or 이전 검토</div>
+                        <div class="abandon-impact">투자금 회수 검토</div>
+                    </div>
+                    <div class="abandon-card">
+                        <div class="abandon-icon">📉</div>
+                        <div class="abandon-title">비수기 야간 운영</div>
+                        <div class="abandon-reason">6-8월 21시 이후 매출 급감</div>
+                        <div class="abandon-action">비수기 영업시간 단축</div>
+                        <div class="abandon-impact">연 +2,400만원</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 집중해야 할 것 -->
+            <div class="section">
+                <div class="section-title" style="color: #10b981;">집중해야 할 것 (Focus)</div>
+                <p style="color: #888; margin-bottom: 24px; font-size: 14px;">"성과는 강점 위에 세워진다" — 가장 잘하는 것에 자원을 집중</p>
+                <div class="grid-2" style="grid-template-columns: 1fr 1fr;">
+                    <div class="chart-box">
+                        <div class="chart-title">파레토 분석: 상위 매장이 전체 이익의 몇 %?</div>
+                        <div id="pareto-chart" style="height: 300px;"></div>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-title">ROI 분석: 투자 대비 수익</div>
+                        <div id="roi-chart" style="height: 300px;"></div>
+                    </div>
+                </div>
+                <div class="focus-insight">
+                    <div class="focus-stat">
+                        <div class="focus-value" id="top2-profit">--</div>
+                        <div class="focus-label">상위 2개 매장이 전체 순이익의</div>
+                    </div>
+                    <div class="focus-recommendation">
+                        <strong>드러커의 조언:</strong> 강남역점, 홍대입구점에 자원 집중 투자.<br>
+                        성과 나는 곳에 더 투자하고, 안 나는 곳은 과감히 정리.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 생산성 지표 -->
+            <div class="section">
+                <div class="section-title">생산성 지표 (Productivity)</div>
+                <p style="color: #888; margin-bottom: 24px; font-size: 14px;">"효율성은 일을 올바르게 하는 것, 효과성은 올바른 일을 하는 것"</p>
+                <div class="productivity-grid" id="productivity-grid"></div>
+            </div>
+
+            <!-- 고객 지표 -->
+            <div class="section">
+                <div class="section-title">고객 지표 (Customer)</div>
+                <p style="color: #888; margin-bottom: 24px; font-size: 14px;">"기업의 목적은 고객을 창출하는 것이다"</p>
+                <div class="grid-2" style="grid-template-columns: 1fr 1fr;">
+                    <div class="chart-box">
+                        <div class="chart-title">채널별 고객 가치 (추정)</div>
+                        <div id="customer-value-chart" style="height: 300px;"></div>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-title">배달 vs 홀: 진짜 수익성</div>
+                        <div class="customer-comparison">
+                            <div class="cc-item">
+                                <div class="cc-channel">배달 고객</div>
+                                <div class="cc-stats">
+                                    <div>객단가 <strong>15,271원</strong></div>
+                                    <div>수수료 후 <strong style="color:#f59e0b;">10,919원</strong></div>
+                                    <div>재주문율 <strong>낮음</strong> (플랫폼 의존)</div>
+                                </div>
+                            </div>
+                            <div class="cc-vs">VS</div>
+                            <div class="cc-item highlight">
+                                <div class="cc-channel">홀 고객</div>
+                                <div class="cc-stats">
+                                    <div>객단가 <strong>14,248원</strong></div>
+                                    <div>수수료 후 <strong style="color:#10b981;">14,248원</strong></div>
+                                    <div>재주문율 <strong>높음</strong> (단골 가능)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cc-insight">
+                            홀 고객 1명 = 배달 고객 <strong>1.3명</strong>의 가치
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 성장 지표 -->
+            <div class="section">
+                <div class="section-title">성장 지표 (Growth)</div>
+                <div class="growth-cards">
+                    <div class="growth-card">
+                        <div class="growth-label">전년 대비 성장률</div>
+                        <div class="growth-value positive">+12.5%</div>
+                        <div class="growth-note">시장 평균 +8% 대비 양호</div>
+                    </div>
+                    <div class="growth-card">
+                        <div class="growth-label">신규 매장 기여</div>
+                        <div class="growth-value">2개</div>
+                        <div class="growth-note">망원점, 성수점 (올해 오픈)</div>
+                    </div>
+                    <div class="growth-card">
+                        <div class="growth-label">동일 매장 성장률</div>
+                        <div class="growth-value positive">+7.2%</div>
+                        <div class="growth-note">기존 6개 매장 기준</div>
+                    </div>
+                    <div class="growth-card">
+                        <div class="growth-label">시장 점유율 (추정)</div>
+                        <div class="growth-value">2.3%</div>
+                        <div class="growth-note">서울 분식 프랜차이즈 기준</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 드러커 최종 권고 -->
+            <div class="drucker-final">
+                <div class="drucker-final-title">드러커의 최종 권고</div>
+                <div class="drucker-final-grid">
+                    <div class="df-item stop">
+                        <div class="df-header">STOP</div>
+                        <ul>
+                            <li>두잇 플랫폼 즉시 철수</li>
+                            <li>성수점 추가 투자 중단</li>
+                            <li>비수기 야간 영업 축소</li>
+                        </ul>
+                    </div>
+                    <div class="df-item start">
+                        <div class="df-header">START</div>
+                        <ul>
+                            <li>강남역 2호점 투자</li>
+                            <li>홀 고객 로열티 프로그램</li>
+                            <li>중앙주방 설립 검토</li>
+                        </ul>
+                    </div>
+                    <div class="df-item continue">
+                        <div class="df-header">CONTINUE</div>
+                        <ul>
+                            <li>강남/홍대 집중 운영</li>
+                            <li>원가율 26.7% 유지</li>
+                            <li>겨울 시즌 마케팅</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- 드러커 탭 끝 -->
+
+        <div class="footer">
+            <p>Powered by <a href="index.html">다다름 FNC</a> | 데이터 기반 요식업 컨설팅</p>
+        </div>
+    </div>
+
+<script>
+// 떡볶이 월별 시즌 계수 (겨울 높음, 여름 낮음)
+const seasonFactor = {
+    1: 1.05,   // 1월: 겨울, 신정 이후 살짝 하락
+    2: 1.15,   // 2월: 겨울 피크, 발렌타인
+    3: 1.08,   // 3월: 개학 시즌
+    4: 0.95,   // 4월: 봄, 야외활동 증가
+    5: 0.88,   // 5월: 가정의달, 외식↓
+    6: 0.82,   // 6월: 초여름, 더워짐
+    7: 0.75,   // 7월: 여름, 최저
+    8: 0.78,   // 8월: 여름, 방학
+    9: 0.92,   // 9월: 가을 시작, 추석
+    10: 1.02,  // 10월: 가을, 회복
+    11: 1.12,  // 11월: 쌀쌀해짐
+    12: 1.18   // 12월: 겨울, 연말 피크
+};
+
+// 매장 데이터 생성 (현실적: 최대 20억, 최소 5억)
+// 상도점 실제 데이터: 월 8,200만 = 연 9.8억 기준
+const stores = [
+    { name: '강남역점', scale: 2.0, deliveryRatio: 0.62, type: 'flagship', baseProfit: 18.5 },
+    { name: '홍대입구점', scale: 1.5, deliveryRatio: 0.72, type: 'large', baseProfit: 17.2 },
+    { name: '신촌점', scale: 1.3, deliveryRatio: 0.68, type: 'medium', baseProfit: 15.8 },
+    { name: '건대입구점', scale: 1.2, deliveryRatio: 0.75, type: 'medium', baseProfit: 16.1 },
+    { name: '상도점', scale: 1.0, deliveryRatio: 0.81, type: 'medium', baseProfit: 16.3, isReal: true },
+    { name: '이태원점', scale: 0.7, deliveryRatio: 0.45, type: 'small', baseProfit: 14.2 },
+    { name: '망원점', scale: 0.65, deliveryRatio: 0.88, type: 'small', baseProfit: 15.5 },
+    { name: '성수점', scale: 0.55, deliveryRatio: 0.55, type: 'small', baseProfit: 13.8 }
+];
+
+const baseMonthlySales = 82000000; // 상도점 기준 월 매출
+const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+
+// 상도점 실제 11월 데이터 (다른 달은 시즌 계수로 역산)
+const sangdoNovSales = 82117570; // 11월 실제 매출
+
+// 매장별 월별 데이터 생성
+function generateStoreData() {
+    return stores.map(store => {
+        const monthlyData = [];
+        let yearTotal = 0;
+
+        if (store.isReal) {
+            // 상도점: 11월 실제 데이터 기준으로 다른 달 추정
+            for (let m = 1; m <= 12; m++) {
+                const baseFromNov = sangdoNovSales / seasonFactor[11]; // 시즌 효과 제거한 기본값
+                const randomVariation = 0.95 + Math.random() * 0.1;
+                const sales = Math.round(baseFromNov * seasonFactor[m] * randomVariation);
+                monthlyData.push(sales);
+                yearTotal += sales;
+            }
+        } else {
+            for (let m = 1; m <= 12; m++) {
+                // 기본 매출 * 스케일 * 시즌 계수 * 랜덤 변동(±10%)
+                const randomVariation = 0.9 + Math.random() * 0.2;
+                const sales = Math.round(baseMonthlySales * store.scale * seasonFactor[m] * randomVariation);
+                monthlyData.push(sales);
+                yearTotal += sales;
+            }
+        }
+
+        // 순이익률 (배달비중 높으면 수수료 때문에 순이익률 낮음)
+        const deliveryPenalty = (store.deliveryRatio - 0.5) * 5;
+        const adjustedProfit = store.baseProfit - deliveryPenalty;
+
+        return {
+            ...store,
+            monthlyData,
+            yearTotal,
+            yearProfit: Math.round(yearTotal * adjustedProfit / 100),
+            profitRate: adjustedProfit.toFixed(1)
+        };
+    });
+}
+
+const storeData = generateStoreData();
+
+// 총괄 KPI 계산
+const totalYearSales = storeData.reduce((sum, s) => sum + s.yearTotal, 0);
+const totalYearProfit = storeData.reduce((sum, s) => sum + s.yearProfit, 0);
+const avgProfitRate = (totalYearProfit / totalYearSales * 100).toFixed(1);
+const avgDeliveryRatio = (storeData.reduce((sum, s) => sum + s.deliveryRatio * s.yearTotal, 0) / totalYearSales * 100).toFixed(0);
+
+// 총괄 KPI 렌더링 (핵심 4가지)
+document.getElementById('total-kpi').innerHTML = `
+    <div class="total-kpi-card" style="--accent: #ff6b35;">
+        <div class="label">연간 총매출</div>
+        <div class="value">${Math.round(totalYearSales / 100000000 * 10) / 10}<span>억원</span></div>
+        <div class="change">8개 매장 합산</div>
+    </div>
+    <div class="total-kpi-card" style="--accent: #10b981;">
+        <div class="label">연간 순이익</div>
+        <div class="value">${Math.round(totalYearProfit / 100000000 * 10) / 10}<span>억원</span></div>
+        <div class="change">순이익률 ${avgProfitRate}%</div>
+    </div>
+    <div class="total-kpi-card" style="--accent: #8b5cf6;">
+        <div class="label">월평균 매출</div>
+        <div class="value">${Math.round(totalYearSales / 12 / 100000000 * 10) / 10}<span>억원</span></div>
+        <div class="change">매장당 ${Math.round(totalYearSales / 12 / 8 / 10000).toLocaleString()}만원</div>
+    </div>
+    <div class="total-kpi-card" style="--accent: #f59e0b;">
+        <div class="label">배달 비중</div>
+        <div class="value">${avgDeliveryRatio}<span>%</span></div>
+        <div class="change">홀 ${100 - avgDeliveryRatio}%</div>
+    </div>
+`;
+
+// 매장 카드 렌더링
+const storeTypeLabels = {
+    flagship: '플래그십',
+    large: '대형',
+    medium: '중형',
+    small: '소형'
+};
+
+document.getElementById('store-grid').innerHTML = storeData.map(store => `
+    <div class="store-card">
+        <div class="store-header">
+            <div class="store-name">${store.name}</div>
+            <div class="store-type ${store.type}">${storeTypeLabels[store.type]}</div>
+        </div>
+        <div class="store-sales">${Math.round(store.yearTotal / 100000000 * 10) / 10}<span>억/년</span></div>
+        <div class="store-profit">순이익 ${Math.round(store.yearProfit / 10000).toLocaleString()}만 (${store.profitRate}%)</div>
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-label">월평균</div>
+                <div class="metric-value">${Math.round(store.yearTotal / 12 / 10000).toLocaleString()}만</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">배달비중</div>
+                <div class="metric-value">${Math.round(store.deliveryRatio * 100)}%</div>
+            </div>
+        </div>
+        <div class="ratio-bar">
+            <div class="ratio-fill" style="width: ${store.deliveryRatio * 100}%"></div>
+        </div>
+        <div class="ratio-labels">
+            <span>배달 ${Math.round(store.deliveryRatio * 100)}%</span>
+            <span>홀 ${Math.round((1 - store.deliveryRatio) * 100)}%</span>
+        </div>
+    </div>
+`).join('');
+
+// 차트 공통 레이아웃
+const chartLayout = {
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#888', family: 'Inter' },
+    margin: { t: 20, b: 50, l: 60, r: 20 },
+    xaxis: { gridcolor: 'rgba(255,255,255,0.03)' },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.03)' }
+};
+
+// 월별 매출 차트
+const monthlyTotals = months.map((_, i) => storeData.reduce((sum, s) => sum + s.monthlyData[i], 0));
+
+Plotly.newPlot('monthly-chart', [
+    {
+        x: months,
+        y: monthlyTotals.map(v => v / 100000000),
+        type: 'scatter',
+        mode: 'lines+markers',
+        fill: 'tozeroy',
+        fillcolor: 'rgba(255, 107, 53, 0.1)',
+        line: { color: '#ff6b35', width: 3 },
+        marker: { size: 8, color: '#ff6b35' },
+        name: '월 매출'
+    }
+], {
+    ...chartLayout,
+    yaxis: { ...chartLayout.yaxis, title: '억원', tickformat: '.1f' }
+}, { responsive: true });
+
+// 분기별 매출 비중
+const quarters = {
+    'Q1 (1-3월)': storeData.reduce((sum, s) => sum + s.monthlyData[0] + s.monthlyData[1] + s.monthlyData[2], 0),
+    'Q2 (4-6월)': storeData.reduce((sum, s) => sum + s.monthlyData[3] + s.monthlyData[4] + s.monthlyData[5], 0),
+    'Q3 (7-9월)': storeData.reduce((sum, s) => sum + s.monthlyData[6] + s.monthlyData[7] + s.monthlyData[8], 0),
+    'Q4 (10-12월)': storeData.reduce((sum, s) => sum + s.monthlyData[9] + s.monthlyData[10] + s.monthlyData[11], 0)
+};
+
+Plotly.newPlot('season-chart', [{
+    values: Object.values(quarters),
+    labels: Object.keys(quarters),
+    type: 'pie',
+    hole: 0.5,
+    marker: { colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'] },
+    textfont: { color: '#fff', size: 13 }
+}], chartLayout, { responsive: true });
+
+// 매장별 매출 순위 (오름차순 정렬 - plotly는 아래서 위로 그림)
+const sortedStores = [...storeData].sort((a, b) => a.yearTotal - b.yearTotal);
+
+Plotly.newPlot('store-ranking', [{
+    y: sortedStores.map(s => s.name),
+    x: sortedStores.map(s => s.yearTotal / 100000000),
+    type: 'bar',
+    orientation: 'h',
+    marker: {
+        color: sortedStores.map(s => {
+            const rank = storeData.filter(st => st.yearTotal > s.yearTotal).length;
+            const colors = ['#ff6b35', '#ff8c5a', '#ffa07a', '#ffb69e', '#ffc8b4', '#d4d4d4', '#b8b8b8', '#9c9c9c'];
+            return colors[rank];
+        })
+    },
+    text: sortedStores.map(s => (s.yearTotal / 100000000).toFixed(1) + '억'),
+    textposition: 'inside',
+    textfont: { color: '#fff', size: 14 }
+}], {
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#888', family: 'Inter' },
+    xaxis: {
+        range: [0, 20],
+        tickvals: [0, 5, 10, 15, 20],
+        ticktext: ['0', '5억', '10억', '15억', '20억'],
+        gridcolor: 'rgba(255,255,255,0.03)',
+        fixedrange: true
+    },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.03)' },
+    margin: { t: 20, b: 50, l: 100, r: 20 }
+}, { responsive: true });
+
+// 매장별 순이익률 (오름차순)
+const sortedByProfit = [...storeData].sort((a, b) => parseFloat(a.profitRate) - parseFloat(b.profitRate));
+
+Plotly.newPlot('profit-comparison', [{
+    y: sortedByProfit.map(s => s.name),
+    x: sortedByProfit.map(s => parseFloat(s.profitRate)),
+    type: 'bar',
+    orientation: 'h',
+    marker: {
+        color: sortedByProfit.map(s => parseFloat(s.profitRate) >= 16 ? '#10b981' : parseFloat(s.profitRate) >= 14 ? '#f59e0b' : '#ef4444')
+    },
+    text: sortedByProfit.map(s => s.profitRate + '%'),
+    textposition: 'inside',
+    textfont: { color: '#fff', size: 14 }
+}], {
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#888', family: 'Inter' },
+    xaxis: {
+        range: [0, 20],
+        tickvals: [0, 5, 10, 15, 20],
+        ticktext: ['0%', '5%', '10%', '15%', '20%'],
+        gridcolor: 'rgba(255,255,255,0.03)',
+        fixedrange: true
+    },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.03)' },
+    margin: { t: 20, b: 50, l: 100, r: 20 }
+}, { responsive: true });
+
+// 배달/홀 매출 비중 (100% 스택)
+const sortedByDelivery = [...storeData].sort((a, b) => a.deliveryRatio - b.deliveryRatio);
+
+Plotly.newPlot('channel-distribution', [{
+    y: sortedByDelivery.map(s => s.name),
+    x: sortedByDelivery.map(s => s.deliveryRatio * 100),
+    type: 'bar',
+    orientation: 'h',
+    name: '배달',
+    marker: { color: '#ff6b35' },
+    text: sortedByDelivery.map(s => Math.round(s.deliveryRatio * 100) + '%'),
+    textposition: 'inside',
+    textfont: { color: '#fff', size: 14 }
+}, {
+    y: sortedByDelivery.map(s => s.name),
+    x: sortedByDelivery.map(s => (1 - s.deliveryRatio) * 100),
+    type: 'bar',
+    orientation: 'h',
+    name: '홀',
+    marker: { color: '#10b981' },
+    text: sortedByDelivery.map(s => Math.round((1 - s.deliveryRatio) * 100) + '%'),
+    textposition: 'inside',
+    textfont: { color: '#fff', size: 14 }
+}], {
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#888', family: 'Inter' },
+    barmode: 'stack',
+    xaxis: {
+        range: [0, 100],
+        tickvals: [0, 25, 50, 75, 100],
+        ticktext: ['0%', '25%', '50%', '75%', '100%'],
+        gridcolor: 'rgba(255,255,255,0.03)',
+        fixedrange: true
+    },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.03)' },
+    margin: { t: 30, b: 40, l: 100, r: 20 },
+    legend: { orientation: 'h', y: 1.1, x: 0.5, xanchor: 'center', font: { color: '#888' } }
+}, { responsive: true });
+
+// 순이익 기여도 (배달 수수료 28.5% 반영)
+const avgDeliveryFeeRate = 0.285;
+
+const profitContributionData = sortedByDelivery.map(s => {
+    const hallProfit = (1 - s.deliveryRatio) * 1;
+    const deliveryProfit = s.deliveryRatio * (1 - avgDeliveryFeeRate);
+    const total = hallProfit + deliveryProfit;
+    return {
+        name: s.name,
+        hallShare: (hallProfit / total) * 100,
+        deliveryShare: (deliveryProfit / total) * 100
+    };
+});
+
+Plotly.newPlot('profit-contribution', [{
+    y: profitContributionData.map(s => s.name),
+    x: profitContributionData.map(s => s.deliveryShare),
+    type: 'bar',
+    orientation: 'h',
+    name: '배달',
+    marker: { color: '#ff6b35' },
+    text: profitContributionData.map(s => Math.round(s.deliveryShare) + '%'),
+    textposition: 'inside',
+    textfont: { color: '#fff', size: 14 }
+}, {
+    y: profitContributionData.map(s => s.name),
+    x: profitContributionData.map(s => s.hallShare),
+    type: 'bar',
+    orientation: 'h',
+    name: '홀',
+    marker: { color: '#10b981' },
+    text: profitContributionData.map(s => Math.round(s.hallShare) + '%'),
+    textposition: 'inside',
+    textfont: { color: '#fff', size: 14 }
+}], {
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#888', family: 'Inter' },
+    barmode: 'stack',
+    xaxis: {
+        range: [0, 100],
+        tickvals: [0, 25, 50, 75, 100],
+        ticktext: ['0%', '25%', '50%', '75%', '100%'],
+        gridcolor: 'rgba(255,255,255,0.03)',
+        fixedrange: true
+    },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.03)' },
+    margin: { t: 30, b: 40, l: 100, r: 20 },
+    legend: { orientation: 'h', y: 1.1, x: 0.5, xanchor: 'center', font: { color: '#888' } }
+}, { responsive: true });
+
+// 의사결정 도구 렌더링
+
+// 1. 즉시 조치 필요
+const urgentActions = [
+    {
+        title: '두잇 플랫폼 전면 철수',
+        desc: '수수료율 44.2%로 적자 수준. 8개 매장 합산 연 8,000만원 손실 중',
+        roi: '연 8,000만원 절감',
+        cost: '전환 비용 0원'
+    },
+    {
+        title: '성수점 배달 마케팅 강화',
+        desc: '배달 비중 55%로 전 매장 최저. 배달앱 상단 노출 투자 필요',
+        roi: '월 +800만원 매출',
+        cost: '월 광고비 50만원'
+    }
+];
+
+document.getElementById('urgent-actions').innerHTML = urgentActions.map(a => `
+    <div class="decision-item">
+        <h4>${a.title}</h4>
+        <p>${a.desc}</p>
+        <span class="roi">${a.roi}</span>
+        <span class="cost">${a.cost}</span>
+    </div>
+`).join('');
+
+// 2. 투자 검토
+const investmentOptions = [
+    {
+        title: '강남역 2호점 오픈',
+        desc: '강남역점 순이익률 17% 최고 수준. 동일 상권 확장 유리',
+        roi: '연 +3억 순이익 예상',
+        cost: '초기 투자 1.5억'
+    },
+    {
+        title: '중앙 주방 설립',
+        desc: '8개 매장 식자재 통합 구매 및 반조리 공급',
+        roi: '원가율 3%p 절감',
+        cost: '초기 투자 8,000만원'
+    }
+];
+
+document.getElementById('investment-options').innerHTML = investmentOptions.map(a => `
+    <div class="decision-item">
+        <h4>${a.title}</h4>
+        <p>${a.desc}</p>
+        <span class="roi">${a.roi}</span>
+        <span class="cost">${a.cost}</span>
+    </div>
+`).join('');
+
+// 3. 비용 절감 기회
+const costSavings = [
+    {
+        title: '배달 수수료 협상',
+        desc: '8개 매장 통합 볼륨으로 쿠팡잇츠 수수료 2%p 협상 가능',
+        roi: '연 4,000만원 절감',
+        cost: '협상 비용 0원'
+    },
+    {
+        title: '비수기 인력 조정',
+        desc: '6-8월 매출 25% 하락 구간, 파트타임 시간 조정',
+        roi: '연 2,400만원 절감',
+        cost: '조정 비용 0원'
+    }
+];
+
+document.getElementById('cost-savings').innerHTML = costSavings.map(a => `
+    <div class="decision-item">
+        <h4>${a.title}</h4>
+        <p>${a.desc}</p>
+        <span class="roi">${a.roi}</span>
+        <span class="cost">${a.cost}</span>
+    </div>
+`).join('');
+
+// 4. 매장별 액션 테이블
+const storeActions = [
+    { name: '강남역점', status: 'good', statusText: '우수', issue: '인력 부족 (피크타임)', action: '파트타임 2명 추가 채용', effect: '+15% 매출' },
+    { name: '홍대입구점', status: 'good', statusText: '양호', issue: '주말 대기시간 과다', action: '주말 인력 보강', effect: '+8% 만족도' },
+    { name: '신촌점', status: 'warning', statusText: '주의', issue: '배달 수수료 과다 (32%)', action: '배민 비중 확대', effect: '월 +120만원' },
+    { name: '건대입구점', status: 'good', statusText: '양호', issue: '원가율 상승 추세', action: '식자재 단가 재협상', effect: '월 +80만원' },
+    { name: '상도점', status: 'good', statusText: '양호', issue: '쿠팡 의존도 58%', action: '플랫폼 다변화', effect: '리스크 분산' },
+    { name: '이태원점', status: 'warning', statusText: '주의', issue: '홀 비중 55% (고정비 부담)', action: '배달 마케팅 강화', effect: '+20% 매출' },
+    { name: '망원점', status: 'warning', statusText: '주의', issue: '배달 88% (리스크)', action: '홀 프로모션 도입', effect: '채널 균형화' },
+    { name: '성수점', status: 'danger', statusText: '위험', issue: '순이익률 13.5% 최저', action: '매장 이전 or 리뉴얼', effect: '+4%p 수익률' }
+];
+
+document.querySelector('#action-table tbody').innerHTML = storeActions.map(s => `
+    <tr>
+        <td><span class="store-name">${s.name}</span></td>
+        <td><span class="status ${s.status}">${s.statusText}</span></td>
+        <td>${s.issue}</td>
+        <td class="action">${s.action}</td>
+        <td class="effect">${s.effect}</td>
+    </tr>
+`).join('');
+
+// 5. What-If 시나리오
+document.getElementById('scenarios').innerHTML = `
+    <div class="scenario-card">
+        <div class="scenario">
+            <h4>시나리오 A: 현상 유지</h4>
+            <div class="condition">현재 운영 방식 그대로 유지<br>추가 투자 없음</div>
+            <div class="result">
+                <div class="result-label">1년 후 예상 순이익</div>
+                <div class="result-value">${Math.round(totalYearProfit / 100000000 * 10) / 10}<span>억원</span></div>
+            </div>
+        </div>
+        <div class="scenario">
+            <h4>시나리오 B: 수수료 최적화</h4>
+            <div class="condition">두잇 철수 + 배민 비중 확대<br>수수료 협상 진행</div>
+            <div class="result">
+                <div class="result-label">1년 후 예상 순이익</div>
+                <div class="result-value">${Math.round((totalYearProfit * 1.15) / 100000000 * 10) / 10}<span>억원 (+15%)</span></div>
+            </div>
+        </div>
+        <div class="scenario">
+            <h4>시나리오 C: 적극 투자</h4>
+            <div class="condition">강남 2호점 + 중앙주방<br>수수료 최적화 병행</div>
+            <div class="result">
+                <div class="result-label">1년 후 예상 순이익</div>
+                <div class="result-value">${Math.round((totalYearProfit * 1.35) / 100000000 * 10) / 10}<span>억원 (+35%)</span></div>
+            </div>
+        </div>
+    </div>
+`;
+
+// ===== 탭 전환 함수 =====
+function showMainTab(index) {
+    document.querySelectorAll('.main-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === index);
+    });
+    document.querySelectorAll('.main-tab-content').forEach((content, i) => {
+        content.classList.toggle('active', i === index);
+    });
+
+    // 드러커 탭이 처음 열릴 때 차트 렌더링
+    if (index === 1 && !window.druckerChartsRendered) {
+        renderDruckerCharts();
+        window.druckerChartsRendered = true;
+    }
+}
+
+// ===== 드러커 탭 데이터 =====
+function renderDruckerCharts() {
+    // 드러커 질문 답변 채우기
+    document.getElementById('customer-answer').innerHTML =
+        '배달: 20-30대 1인가구 (72%)<br>홀: 학생, 직장인 점심 (28%)';
+    document.getElementById('value-answer').innerHTML =
+        '빠른 배달, 가성비, 익숙한 맛<br>홀: 가격, 청결, 접근성';
+    document.getElementById('result-answer').innerHTML =
+        `연 ${Math.round(totalYearProfit / 100000000 * 10) / 10}억 순이익<br>순이익률 ${avgProfitRate}%`;
+    document.getElementById('plan-answer').innerHTML =
+        '홀 비중 30% 확대<br>수수료 최적화<br>강남 2호점 검토';
+
+    // 파레토 분석 (상위 매장 이익 기여도)
+    const sortedByProfit2 = [...storeData].sort((a, b) => b.yearProfit - a.yearProfit);
+    const cumulativeProfit = [];
+    let cumSum = 0;
+    sortedByProfit2.forEach(s => {
+        cumSum += s.yearProfit;
+        cumulativeProfit.push((cumSum / totalYearProfit * 100).toFixed(1));
+    });
+
+    Plotly.newPlot('pareto-chart', [{
+        x: sortedByProfit2.map(s => s.name),
+        y: sortedByProfit2.map(s => s.yearProfit / 100000000),
+        type: 'bar',
+        name: '순이익',
+        marker: { color: '#8b5cf6' }
+    }, {
+        x: sortedByProfit2.map(s => s.name),
+        y: cumulativeProfit,
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: '누적 %',
+        yaxis: 'y2',
+        line: { color: '#ff6b35', width: 3 },
+        marker: { size: 8 }
+    }], {
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#888', family: 'Inter' },
+        xaxis: { gridcolor: 'rgba(255,255,255,0.03)' },
+        yaxis: { title: '순이익(억)', gridcolor: 'rgba(255,255,255,0.03)' },
+        yaxis2: { title: '누적 %', overlaying: 'y', side: 'right', range: [0, 100], gridcolor: 'rgba(255,255,255,0)' },
+        margin: { t: 20, b: 60, l: 60, r: 60 },
+        legend: { orientation: 'h', y: 1.1, font: { color: '#888' } },
+        showlegend: true
+    }, { responsive: true });
+
+    // 상위 2개 매장 기여도
+    const top2Profit = (sortedByProfit2[0].yearProfit + sortedByProfit2[1].yearProfit) / totalYearProfit * 100;
+    document.getElementById('top2-profit').textContent = top2Profit.toFixed(0) + '%';
+
+    // ROI 분석 (가상의 투자금액 설정)
+    const investmentData = storeData.map(s => {
+        // 규모에 따른 가상 투자금액
+        const investment = s.scale * 50000000; // scale 1 = 5천만원 투자
+        const roi = (s.yearProfit / investment * 100).toFixed(0);
+        return { name: s.name, roi: parseFloat(roi), investment, profit: s.yearProfit };
+    }).sort((a, b) => a.roi - b.roi);
+
+    Plotly.newPlot('roi-chart', [{
+        y: investmentData.map(s => s.name),
+        x: investmentData.map(s => s.roi),
+        type: 'bar',
+        orientation: 'h',
+        marker: {
+            color: investmentData.map(s => s.roi >= 300 ? '#10b981' : s.roi >= 200 ? '#f59e0b' : '#ef4444')
+        },
+        text: investmentData.map(s => s.roi + '%'),
+        textposition: 'inside',
+        textfont: { color: '#fff', size: 14 }
+    }], {
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#888', family: 'Inter' },
+        xaxis: { title: 'ROI %', gridcolor: 'rgba(255,255,255,0.03)', range: [0, Math.max(...investmentData.map(s => s.roi)) * 1.1] },
+        yaxis: { gridcolor: 'rgba(255,255,255,0.03)' },
+        margin: { t: 20, b: 50, l: 100, r: 20 }
+    }, { responsive: true });
+
+    // 생산성 그리드 (인당 매출)
+    const employeeCount = { '강남역점': 12, '홍대입구점': 8, '신촌점': 6, '건대입구점': 6, '상도점': 5, '이태원점': 3, '망원점': 3, '성수점': 2 };
+
+    const productivityData = storeData.map(s => {
+        const employees = employeeCount[s.name] || 5;
+        const perEmployee = Math.round(s.yearTotal / employees / 10000);
+        return { ...s, employees, perEmployee };
+    }).sort((a, b) => b.perEmployee - a.perEmployee);
+
+    document.getElementById('productivity-grid').innerHTML = productivityData.map((s, i) => {
+        const rankClass = i < 2 ? 'top' : i < 5 ? 'mid' : 'low';
+        const rankText = i < 2 ? 'TOP' : i < 5 ? '중위' : '하위';
+        return `
+            <div class="prod-card">
+                <div class="store-name">${s.name}</div>
+                <div class="prod-value">${s.perEmployee.toLocaleString()}<span style="font-size:14px;color:#888;">만</span></div>
+                <div class="prod-label">인당 연매출</div>
+                <div class="prod-rank ${rankClass}">${rankText} (${s.employees}명)</div>
+            </div>
+        `;
+    }).join('');
+
+    // 고객 가치 차트
+    const channelValue = [
+        { channel: '홀 고객', value: 14248, netValue: 14248, retention: 40 },
+        { channel: '배달 고객', value: 15271, netValue: 10919, retention: 15 }
+    ];
+
+    Plotly.newPlot('customer-value-chart', [{
+        x: channelValue.map(c => c.channel),
+        y: channelValue.map(c => c.value),
+        type: 'bar',
+        name: '객단가',
+        marker: { color: '#555' }
+    }, {
+        x: channelValue.map(c => c.channel),
+        y: channelValue.map(c => c.netValue),
+        type: 'bar',
+        name: '실수익',
+        marker: { color: '#10b981' }
+    }], {
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#888', family: 'Inter' },
+        barmode: 'group',
+        xaxis: { gridcolor: 'rgba(255,255,255,0.03)' },
+        yaxis: { title: '원', gridcolor: 'rgba(255,255,255,0.03)' },
+        margin: { t: 20, b: 50, l: 70, r: 20 },
+        legend: { orientation: 'h', y: 1.1, font: { color: '#888' } }
+    }, { responsive: true });
+
+    // 최하위 매장 업데이트
+    const worstStore = [...storeData].sort((a, b) => parseFloat(a.profitRate) - parseFloat(b.profitRate))[0];
+    document.getElementById('worst-store').textContent = worstStore.name;
+    document.getElementById('worst-store-reason').textContent = `ROI 최하위, 순이익률 ${worstStore.profitRate}%`;
+}
+</script>
+</body>
+</html>
