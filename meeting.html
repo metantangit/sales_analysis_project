@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다다름 FNC - 2월 경영회의 액션 플랜</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* 네비게이션 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b35, #f7c59f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active { color: #ff6b35; }
+
+        /* 헤더 */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding-top: 100px;
+        }
+
+        .header .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 107, 53, 0.15);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #ff6b35;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff 0%, #ff6b35 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        /* 경고/목표 박스 */
+        .alert-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .alert-box {
+            border-radius: 24px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alert-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .alert-box.warning {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .alert-box.warning::before { background: #ef4444; }
+
+        .alert-box.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .alert-box.success::before { background: #10b981; }
+
+        .alert-box h3 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .alert-box.warning h3 { color: #ef4444; }
+        .alert-box.success h3 { color: #10b981; }
+
+        .alert-box p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .alert-box strong { color: #fff; }
+
+        /* 섹션 */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #ff6b35;
+            border-radius: 2px;
+        }
+
+        .section-title span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-left: 12px;
+        }
+
+        /* 액션 테이블 */
+        .action-table-wrapper {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .action-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .action-table th {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ff6b35;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .action-table td {
+            padding: 20px;
+            vertical-align: top;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .action-table tr:last-child td { border-bottom: none; }
+
+        .action-table tr:hover { background: rgba(255,255,255,0.02); }
+
+        .action-table tr.priority-high { background: rgba(239, 68, 68, 0.05); }
+        .action-table tr.priority-high:hover { background: rgba(239, 68, 68, 0.08); }
+
+        .action-table tr.priority-mid { background: rgba(245, 158, 11, 0.05); }
+        .action-table tr.priority-mid:hover { background: rgba(245, 158, 11, 0.08); }
+
+        .action-num {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .action-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 6px 0;
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .checklist li::before {
+            content: "○";
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+            font-size: 12px;
+        }
+
+        /* 태그 */
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 6px;
+            margin-bottom: 4px;
+        }
+
+        .tag-who { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .tag-when { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+        .tag-money { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .tag-save { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        /* 효과 바 */
+        .impact-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .impact-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 3px;
+        }
+
+        .impact-fill.save { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+        /* 시뮬레이션 */
+        .sim-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .sim-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sim-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #666;
+        }
+
+        .sim-card.best {
+            border: 2px solid #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.02) 100%);
+        }
+
+        .sim-card.best::before { background: #10b981; }
+
+        .sim-scenario {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .sim-profit {
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .sim-profit span {
+            font-size: 18px;
+            color: #888;
+        }
+
+        .sim-change {
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        /* 즉시 실행 박스 */
+        .urgent-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(255, 107, 53, 0.05) 100%);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .urgent-box h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ff6b35;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .urgent-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .urgent-item:last-child { border-bottom: none; }
+
+        .urgent-date {
+            background: #ff6b35;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .urgent-text {
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .urgent-effect {
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        /* KPI 그리드 */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .kpi-card.purple::before { background: #a855f7; }
+        .kpi-card.red::before { background: #ef4444; }
+        .kpi-card.green::before { background: #10b981; }
+
+        .kpi-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .kpi-value span {
+            font-size: 18px;
+            color: #888;
+        }
+
+        .kpi-sub {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 차트 그리드 */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .chart-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 28px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+        }
+
+        /* 손익 테이블 */
+        .summary-table-wrapper {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .summary-table th {
+            background: rgba(255,255,255,0.03);
+            padding: 16px 20px;
+            text-align: right;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .summary-table th:first-child { text-align: left; }
+
+        .summary-table td {
+            padding: 16px 20px;
+            text-align: right;
+            font-size: 14px;
+            color: #ccc;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .summary-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .summary-table tr:last-child td { border-bottom: none; }
+
+        .summary-table tr.highlight {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .summary-table tr.highlight td { color: #10b981; font-weight: 700; }
+
+        .summary-table .negative { color: #ef4444; }
+        .summary-table .positive { color: #10b981; font-weight: 700; }
+
+        /* 푸터 */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 48px;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: #444;
+        }
+
+        @media (max-width: 768px) {
+            .alert-grid, .sim-grid, .kpi-grid, .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 { font-size: 32px; }
+            nav { padding: 16px 20px; }
+            .nav-links { gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">다다름 FNC</div>
+        <div class="nav-links">
+            <a href="index.html">홈</a>
+            <a href="executive.html">경영진</a>
+            <a href="store-sangdo.html">상도점</a>
+            <a href="meeting.html" class="active">경영회의</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <div class="badge">2026년 1월 28일 경영회의</div>
+            <h1>2월 영업이익 개선 액션 플랜</h1>
+            <div class="subtitle">용산 고두리점 | 목표: 영업이익 +50% 달성</div>
+        </div>
+
+        <!-- 경고/목표 박스 -->
+        <div class="alert-grid">
+            <div class="alert-box warning">
+                <h3>2월 문제 진단</h3>
+                <p>영업이익 <strong>827만원 (7.8%)</strong> - 1월 대비 <strong>-652만원</strong><br>
+                인건비율 <strong>36.9%</strong> (목표 32% 초과) | 수도광열비 <strong>+160만</strong> 급등</p>
+            </div>
+            <div class="alert-box success">
+                <h3>개선 목표</h3>
+                <p>영업이익 <strong>827만 → 1,377만</strong> (+67%)<br>
+                프라임코스트 68.6% → <strong>65%</strong> | 인건비율 36.9% → <strong>33%</strong></p>
+            </div>
+        </div>
+
+        <!-- 매출 증대 액션 -->
+        <div class="section">
+            <h2 class="section-title">매출 증대 액션 플랜 <span>목표: +500~800만</span></h2>
+            <div class="action-table-wrapper">
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width:5%">#</th>
+                            <th style="width:13%">액션</th>
+                            <th style="width:37%">구체적 실행 방법</th>
+                            <th style="width:15%">담당 / 일정</th>
+                            <th style="width:15%">예상 효과</th>
+                            <th style="width:15%">체크리스트</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="priority-high">
+                            <td><div class="action-num">1</div></td>
+                            <td><div class="action-name">설날 패키지</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>4인 가족세트: 삼겹+목살+된장찌개+음료 = <strong>15만→12.9만</strong></li>
+                                    <li>네이버 예약 "설날 가족모임" 키워드 광고 (일 3만, 7일)</li>
+                                    <li>기존 단골 100명 카톡 발송 (1/25까지)</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">점장</span><br>
+                                <span class="tag tag-when">1/25~2/2</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-money">+250만</span><br>
+                                <small>예약 20팀 × 12.5만</small>
+                                <div class="impact-bar"><div class="impact-fill" style="width:85%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>세트 구성 확정</li>
+                                    <li>네이버 광고 세팅</li>
+                                    <li>카톡 발송 완료</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td><div class="action-num">2</div></td>
+                            <td><div class="action-name">발렌타인 프로모션</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>2/14 커플석 예약 시 <strong>와인 1병 무료</strong> (원가 1.5만)</li>
+                                    <li>인스타 릴스 1개 제작 (2/7 업로드)</li>
+                                    <li>2인 코스: 모듬구이+사이드2+음료 = <strong>7.9만</strong></li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">본부장</span><br>
+                                <span class="tag tag-when">2/7~2/14</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-money">+150만</span><br>
+                                <small>15팀 × 10만</small>
+                                <div class="impact-bar"><div class="impact-fill" style="width:50%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>와인 10병 발주</li>
+                                    <li>릴스 촬영/편집</li>
+                                    <li>예약 오픈 공지</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="priority-mid">
+                            <td><div class="action-num">3</div></td>
+                            <td><div class="action-name">일요일 가족세트</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>일요일 한정 "가족 해장 세트" (4인 10만)</li>
+                                    <li>매주 일요일 11시 → <strong>10시 30분</strong> 조기 오픈</li>
+                                    <li>당근마켓 용산구 타겟 광고 (주 2만)</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">점장</span><br>
+                                <span class="tag tag-when">매주 일요일</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-money">+120만</span><br>
+                                <small>일 +30만 × 4주</small>
+                                <div class="impact-bar"><div class="impact-fill" style="width:40%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>메뉴판 수정</li>
+                                    <li>당근 광고 세팅</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="priority-mid">
+                            <td><div class="action-num">4</div></td>
+                            <td><div class="action-name">객단가 +5%</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>주문 시 "계란찜/된장찌개 추가?" <strong>필수 멘트</strong></li>
+                                    <li>테이블텐트: 사이드 메뉴 3종 사진</li>
+                                    <li>첫 주문 시 "소주 한 병 드릴까요?" 선제안</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">홀 직원</span><br>
+                                <span class="tag tag-when">2/1~ 상시</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-money">+200만</span><br>
+                                <small>일 +7만 × 28일</small>
+                                <div class="impact-bar"><div class="impact-fill" style="width:65%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>직원 교육 (10분)</li>
+                                    <li>테이블텐트 인쇄</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><div class="action-num">5</div></td>
+                            <td><div class="action-name">웨이팅 최적화</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>나우웨이팅 데이터: 금/토 피크 대기시간 분석</li>
+                                    <li>테이블 세팅 <strong>8분→5분</strong> (버싱 카트)</li>
+                                    <li>노쇼 3회 고객 블랙리스트</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">점장</span><br>
+                                <span class="tag tag-when">2/1~ 상시</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-money">+80만</span><br>
+                                <small>회전율 +0.3회</small>
+                                <div class="impact-bar"><div class="impact-fill" style="width:25%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>버싱카트 구매</li>
+                                    <li>노쇼 정책 공지</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 비용 절감 액션 -->
+        <div class="section">
+            <h2 class="section-title">비용 절감 액션 플랜 <span>목표: -400~560만</span></h2>
+            <div class="action-table-wrapper">
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width:5%">#</th>
+                            <th style="width:13%">액션</th>
+                            <th style="width:37%">구체적 실행 방법</th>
+                            <th style="width:15%">담당 / 일정</th>
+                            <th style="width:15%">절감 효과</th>
+                            <th style="width:15%">체크리스트</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="priority-high">
+                            <td><div class="action-num">1</div></td>
+                            <td><div class="action-name">인건비 구조조정</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>정직원 조형 <strong>주 5일→4일</strong> 전환 협의</li>
+                                    <li>파트 은숙 49h→<strong>35h</strong> 조정</li>
+                                    <li>초과근무 110회 → <strong>80회</strong> 상한 (점장 승인제)</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">본부장</span><br>
+                                <span class="tag tag-when">1/28 협의</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-save">-190만</span><br>
+                                <small>36.9%→33.5%</small>
+                                <div class="impact-bar"><div class="impact-fill save" style="width:90%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>조형 면담</li>
+                                    <li>은숙 스케줄 조정</li>
+                                    <li>승인 양식 작성</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td><div class="action-num">2</div></td>
+                            <td><div class="action-name">수도광열비 긴급점검</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li><strong>1/29(내일)</strong> 가스 점검 요청</li>
+                                    <li>영업 전 예열 <strong>30분→15분</strong></li>
+                                    <li>22시 이후 홀 난방 50% 가동</li>
+                                    <li>냉장고 문 닫힘 체크리스트 (마감)</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">점장</span><br>
+                                <span class="tag tag-when">1/29 즉시</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-save">-100만</span><br>
+                                <small>525만→425만</small>
+                                <div class="impact-bar"><div class="impact-fill save" style="width:60%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>가스점검 예약</li>
+                                    <li>보일러 타이머</li>
+                                    <li>체크리스트 부착</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td><div class="action-num">3</div></td>
+                            <td><div class="action-name">식자재 발주 정밀화</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>2월 매출 기준 발주량 재산정 (-7.6%)</li>
+                                    <li>흑전지 225kg → <strong>210kg</strong></li>
+                                    <li>삼겹 284kg → <strong>265kg</strong></li>
+                                    <li>주 2회 → <strong>주 3회 소량</strong> 발주</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">점장</span><br>
+                                <span class="tag tag-when">2/1 발주~</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-save">-80만</span><br>
+                                <small>폐기율 3%→1%</small>
+                                <div class="impact-bar"><div class="impact-fill save" style="width:45%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>발주량 재계산</li>
+                                    <li>구야가 일정 변경</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="priority-mid">
+                            <td><div class="action-num">4</div></td>
+                            <td><div class="action-name">예비비/비정기 동결</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>예비비 100만 → <strong>50만</strong></li>
+                                    <li>채용공고 → 3월 이연</li>
+                                    <li>소모품 필요시 구매로 전환</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">본부장</span><br>
+                                <span class="tag tag-when">2월 전체</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-save">-50만</span>
+                                <div class="impact-bar"><div class="impact-fill save" style="width:30%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>예비비 한도 공지</li>
+                                    <li>채용 일정 조정</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><div class="action-num">5</div></td>
+                            <td><div class="action-name">프라임코스트 주간관리</div></td>
+                            <td>
+                                <ul class="checklist">
+                                    <li><strong>매주 월요일</strong> 프라임코스트 체크</li>
+                                    <li>67% 초과 시 즉시 원인 분석</li>
+                                    <li>주간 리포트 자동화</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="tag tag-who">점장+본부장</span><br>
+                                <span class="tag tag-when">매주 월요일</span>
+                            </td>
+                            <td>
+                                <span class="tag tag-save">-50만</span><br>
+                                <small>조기 경보 효과</small>
+                                <div class="impact-bar"><div class="impact-fill save" style="width:30%"></div></div>
+                            </td>
+                            <td>
+                                <ul class="checklist">
+                                    <li>리포트 양식</li>
+                                    <li>알림 설정</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 시뮬레이션 결과 -->
+        <div class="section">
+            <h2 class="section-title">시뮬레이션 결과</h2>
+            <div class="sim-grid">
+                <div class="sim-card">
+                    <div class="sim-scenario">보수적 (50% 실행)</div>
+                    <div class="sim-profit">1,127<span>만</span></div>
+                    <div class="sim-change">+300만 (+36%)</div>
+                </div>
+                <div class="sim-card best">
+                    <div class="sim-scenario">목표 (80% 실행)</div>
+                    <div class="sim-profit">1,377<span>만</span></div>
+                    <div class="sim-change">+550만 (+67%)</div>
+                </div>
+                <div class="sim-card">
+                    <div class="sim-scenario">공격적 (100% 실행)</div>
+                    <div class="sim-profit">1,627<span>만</span></div>
+                    <div class="sim-change">+800만 (+97%)</div>
+                </div>
+            </div>
+
+            <div class="urgent-box">
+                <h4>즉시 실행 TOP 3 (이번 주 내)</h4>
+                <div class="urgent-item">
+                    <div class="urgent-date">1/29 (내일)</div>
+                    <div class="urgent-text">가스 점검 예약</div>
+                    <div class="urgent-effect">-100만</div>
+                </div>
+                <div class="urgent-item">
+                    <div class="urgent-date">1/28 (오늘)</div>
+                    <div class="urgent-text">조형/은숙 면담 (근무 조정)</div>
+                    <div class="urgent-effect">-190만</div>
+                </div>
+                <div class="urgent-item">
+                    <div class="urgent-date">1/25까지</div>
+                    <div class="urgent-text">설날 패키지 카톡 100명 발송</div>
+                    <div class="urgent-effect">+250만</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 현황 -->
+        <div class="section">
+            <h2 class="section-title">월별 영업이익 현황</h2>
+            <div class="kpi-grid">
+                <div class="kpi-card purple">
+                    <div class="kpi-label">2026년 1월</div>
+                    <div class="kpi-value">1,479<span>만</span></div>
+                    <div class="kpi-sub">영업이익률 13.9%</div>
+                </div>
+                <div class="kpi-card red">
+                    <div class="kpi-label">2026년 2월 (현재)</div>
+                    <div class="kpi-value">827<span>만</span></div>
+                    <div class="kpi-sub">영업이익률 7.8%</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">2026년 2월 (목표)</div>
+                    <div class="kpi-value">1,377<span>만</span></div>
+                    <div class="kpi-sub">영업이익률 14.0%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 차트 -->
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-title">비용 구조 개선 (전/후)</div>
+                <div class="chart-container">
+                    <canvas id="costCompareChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">액션별 효과 기여도</div>
+                <div class="chart-container">
+                    <canvas id="actionImpactChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 손익 테이블 -->
+        <div class="section">
+            <h2 class="section-title">상세 손익 비교</h2>
+            <div class="summary-table-wrapper">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>구분</th>
+                            <th>1월</th>
+                            <th>2월 (현재)</th>
+                            <th>2월 (목표)</th>
+                            <th>3월</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>총 매출액</td>
+                            <td>106,200,000</td>
+                            <td>98,100,000</td>
+                            <td class="positive">105,900,000</td>
+                            <td>110,300,000</td>
+                        </tr>
+                        <tr>
+                            <td>인건비</td>
+                            <td>34,323,725 (32.3%)</td>
+                            <td class="negative">36,207,400 (36.9%)</td>
+                            <td class="positive">34,307,400 (32.4%)</td>
+                            <td>36,473,635 (33.1%)</td>
+                        </tr>
+                        <tr>
+                            <td>식자재비</td>
+                            <td>34,172,750 (32.2%)</td>
+                            <td>31,094,023 (31.7%)</td>
+                            <td class="positive">30,294,023 (28.6%)</td>
+                            <td>35,513,667 (32.2%)</td>
+                        </tr>
+                        <tr>
+                            <td>수도광열비</td>
+                            <td>3,650,000</td>
+                            <td class="negative">5,250,000</td>
+                            <td class="positive">4,250,000</td>
+                            <td>3,700,000</td>
+                        </tr>
+                        <tr class="highlight">
+                            <td>영업이익</td>
+                            <td>14,794,045 (13.9%)</td>
+                            <td>8,267,137 (7.8%)</td>
+                            <td>13,767,137 (13.0%)</td>
+                            <td>16,508,778 (15.5%)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>다다름 FNC 경영회의 대시보드 | 2026.01.28 생성</p>
+        </div>
+    </div>
+
+    <script>
+        Chart.defaults.color = '#888';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+
+        // 비용 구조 비교
+        new Chart(document.getElementById('costCompareChart'), {
+            type: 'bar',
+            data: {
+                labels: ['인건비', '식자재비', '수도광열비', '기타'],
+                datasets: [
+                    { label: '2월(현재)', data: [36.9, 31.7, 5.4, 18.2], backgroundColor: 'rgba(239, 68, 68, 0.7)' },
+                    { label: '2월(목표)', data: [32.4, 28.6, 4.0, 18.0], backgroundColor: 'rgba(16, 185, 129, 0.7)' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+                scales: {
+                    y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 액션별 효과
+        new Chart(document.getElementById('actionImpactChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['인건비 조정', '설날 패키지', '수도광열비', '객단가 상승', '식자재', '기타'],
+                datasets: [{
+                    data: [190, 250, 100, 200, 80, 100],
+                    backgroundColor: ['#667eea', '#10b981', '#3b82f6', '#f59e0b', '#a855f7', '#6b7280']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 }, padding: 12 } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
